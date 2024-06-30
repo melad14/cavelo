@@ -17,10 +17,19 @@ const orderSchema = mongoose.Schema({
 
   totalOrderPrice: Number,
 
-  shippingAdress: {
+  shippingAddress: {
     street: String,
     city: String,
-    phone: String
+    phone: String,
+    secondPhone: String,
+  },
+
+  deliveryOption: {
+    type: String,
+    enum: ['indoor', 'delevery'],
+  },
+  tableNumber: {
+    type: Number,
   },
 
   paymentmethod: {
@@ -50,7 +59,7 @@ const orderSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
   },
-  details:{
+  details: {
     type: String,
   }
 

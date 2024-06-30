@@ -4,24 +4,32 @@ import { catchAsyncErr } from "../../utils/catcherr.js";
 
 
 export const createItem = catchAsyncErr(async (req, res, next) => {
-    const { image, name, description, category, basePrice, sizes, extraIngredientPrices } = req.body;
-        
-    const parsedSizes = JSON.parse(sizes);
-    const parsedExtraIngredientPrices = JSON.parse(extraIngredientPrices);
-    
-    const result = new menuModel({
-        image,
-        name,
-        description,
-        category,
-        basePrice,
-        sizes: parsedSizes,
-        extraIngredientPrices: parsedExtraIngredientPrices
-    });
+
+    if( req.files['image']?.[0]?.path){
+        req.body.image = req.files['image']?.[0]?.path
+    }
+      // Parse the sizes and extraIngredientPrices fields from JSON strings
+  if (req.body.sizes) {
+    try {
+      req.body.sizes = JSON.parse(req.body.sizes);
+    } catch (error) {
+      return next(new AppErr('Invalid JSON format for sizes', 400));
+    }
+  }
+
+  if (req.body.extraIngredientPrices) {
+    try {
+      req.body.extraIngredientPrices = JSON.parse(req.body.extraIngredientPrices);
+    } catch (error) {
+      return next(new AppErr('Invalid JSON format for extraIngredientPrices', 400));
+    }
+  }
+    const result = new menuModel(req.body);
    if(!result) return  next(new AppErr('failed create item', 200))
     await result.save();
     res.status(200).json({ message: "success", result })
 })
+
 
 export const editItem = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params

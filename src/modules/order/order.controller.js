@@ -1,5 +1,5 @@
 import { cartModel } from "../../../databases/models/cart.js"
-import { notificationModel } from "../../../databases/models/notifcation.js";
+import { userModel } from "../../../databases/models/users.js";
 import { AppErr } from "../../utils/AppErr.js";
 import { catchAsyncErr } from "../../utils/catcherr.js"
 import { orderModel } from './../../../databases/models/Order.js';
@@ -10,17 +10,9 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 
     const cart = await cartModel.findById(req.params.id)
     if (!cart) return next(new AppErr('cart not found', 200))
-    const totalOrderPrice = cart.totalPriceAfterDiscount ?
-        cart.totalPriceAfterDiscount : cart.totalPrice
-
-    const order = new orderModel({
-        user: req.user._id,
-        cartItems: cart.cartItems,
-        totalOrderPrice,
-        shippingAdress: req.body.shippingAdress,
-        details:req.body.details,
-
-    })
+        req.body.user=req.user._id
+        req.body.cartItems=cart.cartItems 
+    const order = new orderModel(req.body)
     await order.save()
 
     if (order) {
@@ -55,7 +47,17 @@ const getAllorders = catchAsyncErr(async (req, res, next) => {
 
 })
 
-const complete = catchAsyncErr(async (req, res, next) => {
+const completeInDoor = catchAsyncErr(async (req, res, next) => {
+    const { id } = req.params;
+
+    let order = await orderModel.findByIdAndUpdate(id, { iscomplete: true }, { new: true });
+
+    if (!order) return next(new AppErr('Order not found', 404));
+
+    res.status(200).json({ message: "Success", order });
+});
+
+const completeDelivry = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params;
     const { deliveryPersonName } = req.body;
 
@@ -63,20 +65,13 @@ const complete = catchAsyncErr(async (req, res, next) => {
 
     if (!order) return next(new AppErr('Order not found', 404));
 
-    // Find the delivery person by name
     const deliveryPerson = await userModel.findOne({ name: deliveryPersonName, role: 'delivery' });
     if (!deliveryPerson) return next(new AppErr('Delivery person not found', 404));
 
     order.assignedDeliveryPerson = deliveryPerson._id;
+    
     await order.save();
-
-    const notification = new notificationModel({
-        title: "New Order Assigned",
-        message: `You have been assigned a new order. Order ID: ${order._id}`,
-        notid: deliveryPerson.name
-    });
-    await notification.save();
-
+    
     res.status(200).json({ message: "Success", order });
 });
 
@@ -103,7 +98,8 @@ const paid = catchAsyncErr(async (req, res, next) => {
 export {
     ctreateCashOrder,
     getSpecificorders,
-    getAllorders,complete,paid,deliverd,AdminGetOrder
+    getAllorders,completeDelivry,completeInDoor,
+    paid,deliverd,AdminGetOrder
     
     
 }

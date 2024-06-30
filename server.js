@@ -19,6 +19,8 @@ import reviewRouter from './src/modules/review/review.router.js';
 import tableRouter from './src/modules/reservation/reservation.router.js';
 import notificationRouter from './src/modules/notification/notification.route.js';
 import adminRouter from './src/modules/admin-auth/admin.router.js';
+import addressRouter from './src/modules/adresses/address.router.js';
+import deliveryRouter from './src/modules/delivery/delivery.router.js';
 
 
 const app = express()
@@ -42,6 +44,8 @@ app.use('/api/v1/review', reviewRouter);
 app.use('/api/v1/tables', tableRouter);
 app.use('/api/v1/notifications', notificationRouter);
 app.use('/api/v1/admin', adminRouter);
+app.use('/api/v1/address', addressRouter);
+app.use('/api/v1/delivery', deliveryRouter);
 
 app.all('*', (req, res, next) => {
     next(new AppErr("this route not found", 404))

@@ -47,7 +47,7 @@ export const createUser = catchAsyncErr(async (req, res, next) => {
 
     const user = new userModel({ phone, fullName })
     await user.save()
-    res.status(200).json({ message: "user created ", user });
+    res.status(200).json({ "message": "user created ", user });
 
 
 
@@ -57,13 +57,21 @@ export const getUsers = catchAsyncErr(async (req, res, next) => {
 
     const users = await userModel.find()
 
-    res.status(200).json({ message: "success", users });
+    res.status(200).json({ "message": "success", users });
 
 });
 export const specificUser = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params;
-    const users = await userModel.findById(id)
+    const user = await userModel.findById(id)
 
-    res.status(200).json({ message: "success", users });
+    res.status(200).json({ "message": "success", user });
+
+});
+
+export const editUserRole = catchAsyncErr(async (req, res, next) => {
+    const { id } = req.params;
+    const{role}=req.body
+    const user = await userModel.findByIdAndUpdate(id,{role},{new:true})
+    res.status(200).json({ "message": "success", user });
 
 });

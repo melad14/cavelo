@@ -20,9 +20,7 @@ const userSchema = mongoose.Schema({
     enum: ["user", "admin","delivery"],
     default: 'user'
   },
-  streetAddress: {
-    type: String
-  },
+ 
   phone: {
     type: String,
     require:true,

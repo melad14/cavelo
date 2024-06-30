@@ -16,7 +16,6 @@ function calctotalPrice(cart) {
 
 }
 
-
 const addTocart = catchAsyncErr(async (req, res, next) => {
     let result = await menuModel.findById(req.body.item)
     if (!result) return next(new AppErr(`item not found`, 200))
@@ -27,9 +26,11 @@ const addTocart = catchAsyncErr(async (req, res, next) => {
         let newcart = new cartModel({
             user: req.user._id,
             cartItems: [req.body]
-
         })
 
+        newcart = await newcart.populate('cartItems.item')
+
+    ;
         calctotalPrice(newcart)
         await newcart.save()
         return res.status(201).json({ "message": " success", newcart })
@@ -41,11 +42,13 @@ const addTocart = catchAsyncErr(async (req, res, next) => {
     } else {
         cartExist.cartItems.push(req.body)
     }
-    calctotalPrice(cartExist)
     if (cartExist.discount) {
         cartExist.totalPriceAfterDiscount = cartExist.totalPrice - (cartExist.totalPrice * cartExist.discount) / 100
     }
+    cartExist= await cartExist.populate('cartItems.item')
+    calctotalPrice(cartExist)
     await cartExist.save()
+    
     res.status(201).json({ "message": " success", cart: cartExist })
 
 })
@@ -60,6 +63,7 @@ const removeFromCart = catchAsyncErr(async (req, res, next) => {
     }
     res.status(200).json({ "message": " success", result })
 })
+
 
 const updateQuantity = catchAsyncErr(async (req, res, next) => {
     let result = await menuModel.findById(req.params.id)
@@ -78,6 +82,7 @@ const updateQuantity = catchAsyncErr(async (req, res, next) => {
     res.status(201).json({ "message": " success", cartExist })
 })
 
+
 const applyCoupon = catchAsyncErr(async (req, res, next) => {
     let coupon = await coponModel.findOne({ code: req.body.code, expire: { $gt: Date.now() } })
     if (!coupon) return next(new AppErr(`coupon not available`, 404))
@@ -88,6 +93,8 @@ const applyCoupon = catchAsyncErr(async (req, res, next) => {
     await cart.save()
     res.status(201).json({ "message": " success", cart })
 })
+
+
 
 const getLoggedUserCart = catchAsyncErr(async (req, res, next) => {
     let cart = await cartModel.findOne({ user: req.user._id }).populate('cartItems.item')
@@ -105,3 +112,16 @@ export {
     applyCoupon,
     getLoggedUserCart
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

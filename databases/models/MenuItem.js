@@ -1,10 +1,5 @@
 import mongoose from 'mongoose';
 
-const ExtraPriceSchema = mongoose.Schema({
-  name: String,
-  price: Number,
-});
-
 const menuSchema = mongoose.Schema({
   image: {
     type: String
@@ -23,11 +18,18 @@ const menuSchema = mongoose.Schema({
     type: Number
   },
   sizes: {
-    type:[ExtraPriceSchema]
+    type:[{
+      name: String,
+      price: Number,
+    }]
   },
   extraIngredientPrices: {
-    type:[ExtraPriceSchema]
+    type:[{
+      name: String,
+      price: Number,
+    }]
   },
+
 }, {timestamps: true});
 
 export const menuModel = mongoose.model('menu', menuSchema);
