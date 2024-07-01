@@ -3,7 +3,7 @@ import { addTocart, applyCoupon, getLoggedUserCart, removeFromCart, updateQuanti
 import { allowTo, protectedRoutes } from "../../middleware/protectedRoute.js"
 
 const cartRouter = express.Router()
-cartRouter.post('/add-to-cart',protectedRoutes,allowTo('user'),addTocart)
+cartRouter.post('/add-to-cart',protectedRoutes,allowTo('user','delivery'),addTocart)
 cartRouter.get('/get-user-cart',protectedRoutes,allowTo('user'),getLoggedUserCart)
 cartRouter.put('/update-quantity/:id',protectedRoutes,allowTo('user'),updateQuantity)
 cartRouter.post('/apllyCopon',protectedRoutes,allowTo('user'),applyCoupon)

@@ -6,7 +6,7 @@ const deliveryRouter = express.Router();
 
 deliveryRouter.get('/get-orders',  protectedRoutes, allowTo('delivery'),get_orders);
 deliveryRouter.get('/get-one-order/:id',  protectedRoutes, allowTo('delivery'),getOneOrder);
-
+0
 deliveryRouter.put('/deliverd/:id',protectedRoutes,allowTo('delivery'),deliverd)
 deliveryRouter.put('/paid/:id',protectedRoutes,allowTo('delivery'),paid)
 

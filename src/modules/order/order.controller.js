@@ -10,13 +10,13 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 
     const cart = await cartModel.findById(req.params.id)
     if (!cart) return next(new AppErr('cart not found', 200))
-        req.body.user=req.user._id
-        req.body.cartItems=cart.cartItems 
+    req.body.user = req.user._id
+    req.body.cartItems = cart.cartItems
     const order = new orderModel(req.body)
     await order.save()
 
     if (order) {
-     
+
         await cartModel.findOneAndDelete({ user: req.user._id })
         return res.status(201).json({ "message": " success", order })
     } else {
@@ -26,22 +26,22 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 
 const getSpecificorders = catchAsyncErr(async (req, res, next) => {
 
-    let order = await orderModel.find({ user: req.user._id }).populate('cartItems.item')
+    let order = await orderModel.find({ user: req.user._id }).populate('cartItems.item').populate('assignedDeliveryPerson', 'name -_id')
     if (!order) return next(new AppErr('order not found', 404))
     res.status(201).json({ "message": " success", order })
 
 
 })
 const AdminGetOrder = catchAsyncErr(async (req, res, next) => {
-const {id}=req.params
-    let order = await orderModel.findById(id).populate('cartItems.item')
+    const { id } = req.params
+    let order = await orderModel.findById(id).populate('cartItems.item').populate('assignedDeliveryPerson', 'name -_id')
     if (!order) return next(new AppErr('order not found', 404))
     res.status(201).json({ "message": " success", order })
 
 })
 const getAllorders = catchAsyncErr(async (req, res, next) => {
 
-    let orders = await orderModel.find({}).populate('cartItems.item')
+    let orders = await orderModel.find().populate('cartItems.item').populate('assignedDeliveryPerson', 'name -_id')
     if (!orders) return next(new AppErr('orders not found', 404))
     res.status(201).json({ "message": " success", orders })
 
@@ -61,7 +61,7 @@ const completeDelivry = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params;
     const { deliveryPersonName } = req.body;
 
-    let order = await orderModel.findByIdAndUpdate(id, { isComplete: true }, { new: true });
+    let order = await orderModel.findByIdAndUpdate(id, { iscomplete: true }, { new: true });
 
     if (!order) return next(new AppErr('Order not found', 404));
 
@@ -69,25 +69,25 @@ const completeDelivry = catchAsyncErr(async (req, res, next) => {
     if (!deliveryPerson) return next(new AppErr('Delivery person not found', 404));
 
     order.assignedDeliveryPerson = deliveryPerson._id;
-    
+    await order.populate('assignedDeliveryPerson', 'name -_id')
     await order.save();
-    
+
     res.status(200).json({ message: "Success", order });
 });
 
 const deliverd = catchAsyncErr(async (req, res, next) => {
 
-    const{id}=req.params
-    let order = await orderModel.findByIdAndUpdate(id,{isDelivered:true, deliveredAt: new Date() },{new:true})
-
+    const { id } = req.params
+    let order = await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
+    await order.populate('assignedDeliveryPerson', 'name -_id')
     res.status(201).json({ "message": " success", order })
 
 })
 const paid = catchAsyncErr(async (req, res, next) => {
 
-    const{id}=req.params
-    let order = await orderModel.findByIdAndUpdate(id,{isPaid:true,paidAt: new Date() },{new:true})
-
+    const { id } = req.params
+    let order = await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
+    await order.populate('assignedDeliveryPerson', 'name -_id')
     res.status(201).json({ "message": " success", order })
 
 })
@@ -98,9 +98,9 @@ const paid = catchAsyncErr(async (req, res, next) => {
 export {
     ctreateCashOrder,
     getSpecificorders,
-    getAllorders,completeDelivry,completeInDoor,
-    paid,deliverd,AdminGetOrder
-    
-    
+    getAllorders, completeDelivry, completeInDoor,
+    paid, deliverd, AdminGetOrder
+
+
 }
 
