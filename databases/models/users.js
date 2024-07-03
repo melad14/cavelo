@@ -34,7 +34,9 @@ adresses: [{
     street: String,
     phone: String
 }],
-  code: {  type: String}
+  code: {  
+    type:Number,
+    }
 
 }, { timestamps: true });
 
