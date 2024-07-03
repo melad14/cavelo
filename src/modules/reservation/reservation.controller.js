@@ -11,9 +11,9 @@ export const createReservation =catchAsyncErr( async (req, res, next) => {
         req.body.email=user.email
 
         const reservation = new Reservation(req.body);
-        if(!reservation) return  next(new AppErr('error creating reservation', 200))
+        if(!reservation) return  next(new AppErr('error creating reservation', 400))
         await reservation.save();
-        res.status(201).json({ message: "success", data: reservation });
+        res.status(201).json({ "message": "success", "statusCode":200,data: reservation });
 
 });
 
@@ -21,9 +21,9 @@ export const createReservation =catchAsyncErr( async (req, res, next) => {
 export const getReservations =catchAsyncErr( async (req, res, next) => {
    
         const reservations = await Reservation.find();
-        if(!reservations) return  next(new AppErr('error fetshing reservation', 200))
+        if(!reservations) return  next(new AppErr('error fetshing reservation', 404))
 
-        res.status(200).json({ message: "success", data: reservations });
+        res.status(200).json({ "message": "success", "statusCode":200,data: reservations });
    
 });
 
@@ -31,26 +31,26 @@ export const getReservations =catchAsyncErr( async (req, res, next) => {
 export const getReservation =catchAsyncErr( async (req, res, next) => {
     
         const reservation = await Reservation.findById(req.params.id);
-        if (!reservation)  return next(new AppErr('Reservation not found', 200));
+        if (!reservation)  return next(new AppErr('Reservation not found', 404));
     
-        res.status(200).json({ message: "success", data: reservation });
+        res.status(200).json({ "message": "success","statusCode":200, data: reservation });
    
 });
 
 export const updateReservation =catchAsyncErr( async (req, res, next) => {
 
         const reservation = await Reservation.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!reservation) return next(new AppErr('Reservation not found', 200));
+        if (!reservation) return next(new AppErr('Reservation not found', 404));
         
-        res.status(200).json({ message: "success", data: reservation });
+        res.status(200).json({ "message": "success","statusCode":200, data: reservation });
     
 });
 
 export const deleteReservation =catchAsyncErr( async (req, res, next) => {
     
         const reservation = await Reservation.findByIdAndDelete(req.params.id);
-        if (!reservation)  return next(new AppErr('Reservation not found', 200));
+        if (!reservation)  return next(new AppErr('Reservation not found', 404));
     
-        res.status(201).json({ message: "success" })
+        res.status(201).json({ "message": "success" ,"statusCode":200,})
 
 });

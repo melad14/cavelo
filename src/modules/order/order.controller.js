@@ -18,7 +18,7 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
     if (order) {
 
         await cartModel.findOneAndDelete({ user: req.user._id })
-        return res.status(201).json({ "message": " success", order })
+        return res.status(201).json({ "message": " success","statusCode":200, order })
     } else {
         return next(new AppErr('order not found', 404))
     }
@@ -28,7 +28,7 @@ const getSpecificorders = catchAsyncErr(async (req, res, next) => {
 
     let order = await orderModel.find({ user: req.user._id }).populate('cartItems.item').populate('assignedDeliveryPerson', 'name -_id')
     if (!order) return next(new AppErr('order not found', 404))
-    res.status(201).json({ "message": " success", order })
+    res.status(201).json({ "message": " success","statusCode":200, order })
 
 
 })
@@ -36,14 +36,14 @@ const AdminGetOrder = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
     let order = await orderModel.findById(id).populate('cartItems.item').populate('assignedDeliveryPerson', 'name -_id')
     if (!order) return next(new AppErr('order not found', 404))
-    res.status(201).json({ "message": " success", order })
+    res.status(201).json({ "message": " success","statusCode":200, order })
 
 })
 const getAllorders = catchAsyncErr(async (req, res, next) => {
 
     let orders = await orderModel.find().populate('cartItems.item').populate('assignedDeliveryPerson', 'name -_id')
     if (!orders) return next(new AppErr('orders not found', 404))
-    res.status(201).json({ "message": " success", orders })
+    res.status(201).json({ "message": " success","statusCode":200, orders })
 
 })
 
@@ -54,7 +54,7 @@ const completeInDoor = catchAsyncErr(async (req, res, next) => {
 
     if (!order) return next(new AppErr('Order not found', 404));
 
-    res.status(200).json({ message: "Success", order });
+    res.status(200).json({ "message": "Success","statusCode":200, order });
 });
 
 const completeDelivry = catchAsyncErr(async (req, res, next) => {
@@ -72,7 +72,7 @@ const completeDelivry = catchAsyncErr(async (req, res, next) => {
     await order.populate('assignedDeliveryPerson', 'name -_id')
     await order.save();
 
-    res.status(200).json({ message: "Success", order });
+    res.status(200).json({ "message": "Success", "statusCode":200,order });
 });
 
 const deliverd = catchAsyncErr(async (req, res, next) => {
@@ -80,7 +80,7 @@ const deliverd = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
     let order = await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
     await order.populate('assignedDeliveryPerson', 'name -_id')
-    res.status(201).json({ "message": " success", order })
+    res.status(201).json({ "message": " success","statusCode":200, order })
 
 })
 const paid = catchAsyncErr(async (req, res, next) => {
@@ -88,7 +88,7 @@ const paid = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
     let order = await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
     await order.populate('assignedDeliveryPerson', 'name -_id')
-    res.status(201).json({ "message": " success", order })
+    res.status(201).json({ "message": " success","statusCode":200, order })
 
 })
 

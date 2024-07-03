@@ -23,7 +23,7 @@ const signin = catchAsyncErr(async (req, res, next) => {
      const result=  await userModel.findOneAndUpdate({ phone }, { otp, otpExpires,code:0 },{new:true});
         await sendSMSTest(phone, `Your OTP is ${otp}`);
     
-        res.status(200).json({ "message": "user created and OTP sent","statusCode":"200" });
+        res.status(200).json({ "message": "user created and OTP sent","statusCode":200 });
     }
 else{
     const otp = generateOTP();
@@ -32,7 +32,7 @@ else{
 
     await sendSMSTest(phone, `Your OTP is ${otp}`);
 
-    res.status(200).json({ "message": "OTP sent","statusCode":"200"  });
+    res.status(200).json({ "message": "OTP sent","statusCode":200,  });
 }
    
 });
@@ -42,13 +42,13 @@ const verifyOTP = catchAsyncErr(async (req, res, next) => {
     let user = await userModel.findOne({ phone });
 
     if (!user || user.otp !== otp || new Date() > new Date(user.otpExpires)) {
-        return next(new AppErr("Invalid or expired OTP", 200));
+        return next(new AppErr("Invalid or expired OTP", 400));
     }
 
     await userModel.updateOne({ phone }, { otp: null, otpExpires: null });
 
     let token = jwt.sign({ user }, `${process.env.TOKEN_SK}`);
-    res.status(200).json({ "message": "success","statusCode":"200" , token,result:user.code });
+    res.status(200).json({ "message": "success","statusCode":200 , token,result:user.code });
 });
 
 
@@ -57,7 +57,7 @@ const completeProfile = catchAsyncErr(async (req, res, next) => {
         req.body.image = req.files['image']?.[0]?.path;
         const result = await userModel.findByIdAndUpdate(req.user._id, req.body, { new: true });
         if (!result) return next(new AppErr("failed to complete profile", 400)); // 400 for client error
-        res.status(200).json({ "message": "success", "statusCode":"200" ,result });
+        res.status(200).json({ "message": "success", "statusCode":200 ,result });
     } catch (error) {
         next(error);
     }
@@ -70,14 +70,14 @@ const editProfile = catchAsyncErr(async (req, res, next) => {
     }
     const result = await userModel.findByIdAndUpdate(id, req.body, { new: true });
 
-    res.status(200).json({ 'message': "success","statusCode":"200" , result });
+    res.status(200).json({ 'message': "success","statusCode":200 , result });
 });
 
 const getProfile = catchAsyncErr(async (req, res, next) => {
     const id = req.user._id
     const result = await userModel.findById(id)
 
-    res.status(200).json({ "message": " success","statusCode":"200" , result })
+    res.status(200).json({ "message": " success","statusCode":200 , result })
 })
 
 
@@ -88,9 +88,9 @@ const deleteAcc = catchAsyncErr(async (req, res, next) => {
 
     const user = await userModel.findByIdAndDelete({ _id: userId });
 
-    if (!user) return next(new AppErr("user not found or you are not authorized to delete this account", 200));
+    if (!user) return next(new AppErr("user not found or you are not authorized to delete this account", 400));
 
-    res.status(200).json({ "message": "user deleted","statusCode":"200"  });
+    res.status(200).json({ "message": "user deleted","statusCode":200  });
 
 });
 

@@ -18,7 +18,7 @@ function calctotalPrice(cart) {
 
 const addTocart = catchAsyncErr(async (req, res, next) => {
     let result = await menuModel.findById(req.body.item)
-    if (!result) return next(new AppErr(`item not found`, 200))
+    if (!result) return next(new AppErr(`item not found`, 404))
     req.body.basePrice = result.basePrice
 
     let cartExist = await cartModel.findOne({ user: req.user._id })
@@ -33,7 +33,7 @@ const addTocart = catchAsyncErr(async (req, res, next) => {
     ;
         calctotalPrice(newcart)
         await newcart.save()
-        return res.status(201).json({ "message": " success", newcart })
+        return res.status(201).json({ "message": " success","statusCode":200 , newcart })
     }
 
     let find = cartExist.cartItems.find((elm) => elm.item == req.body.item)
@@ -49,19 +49,19 @@ const addTocart = catchAsyncErr(async (req, res, next) => {
     calctotalPrice(cartExist)
     await cartExist.save()
     
-    res.status(201).json({ "message": " success", cart: cartExist })
+    res.status(201).json({ "message": " success","statusCode":200 , cart: cartExist })
 
 })
 
 
 const removeFromCart = catchAsyncErr(async (req, res, next) => {
     const result = await cartModel.findOneAndUpdate({ user: req.user._id }, { $pull: { cartItems: { _id: req.params.id } } }, { new: true })
-    if (!result) return next(new AppErr(`cart not found`, 200))
+    if (!result) return next(new AppErr(`cart not found`, 404))
     calctotalPrice(result)
     if (result.discount) {
         result.totalPriceAfterDiscount = result.totalPrice - (result.totalPrice * result.discount) / 100
     }
-    res.status(200).json({ "message": " success", result })
+    res.status(200).json({ "message": " success","statusCode":200 , result })
 })
 
 
@@ -79,7 +79,7 @@ const updateQuantity = catchAsyncErr(async (req, res, next) => {
         cartExist.totalPriceAfterDiscount = cartExist.totalPrice - (cartExist.totalPrice * cartExist.discount) / 100
     }
     await cartExist.save()
-    res.status(201).json({ "message": " success", cartExist })
+    res.status(201).json({ "message": " success","statusCode":200 , cartExist })
 })
 
 
@@ -91,16 +91,16 @@ const applyCoupon = catchAsyncErr(async (req, res, next) => {
     cart.totalPriceAfterDiscount = cart.totalPrice - (cart.totalPrice * coupon.discount) / 100
     cart.discount = coupon.discount
     await cart.save()
-    res.status(201).json({ "message": " success", cart })
+    res.status(201).json({ "message": " success","statusCode":200 , cart })
 })
 
 
 
 const getLoggedUserCart = catchAsyncErr(async (req, res, next) => {
     let cart = await cartModel.findOne({ user: req.user._id }).populate('cartItems.item')
-    if (!cart) return next(new AppErr(`cart not found`, 200))
+    if (!cart) return next(new AppErr(`cart not found`, 404))
 
-    res.status(201).json({ "message": " success", cart })
+    res.status(201).json({ "message": " success","statusCode":200 , cart })
 
 
 })

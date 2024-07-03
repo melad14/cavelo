@@ -8,15 +8,17 @@ export const addSchedule = catchAsyncErr(async (req, res, next) => {
     const { day, startTime, endTime } = req.body;
     const schedule = new Schedule({ day, startTime, endTime });
     await schedule.save();
-    return res.status(201).json({ "message": " success", schedule })
+    return res.status(200).json({ "message": " success","statusCode":200, schedule })
 
 });
+
 
 export const getSchedules = catchAsyncErr(async (req, res, next) => {
     const schedules = await Schedule.find();
-    return res.status(201).json({ "message": " success", schedules })
+    return res.status(200).json({ "message": " success", "statusCode":200,schedules })
 
 });
+
 
 export const editSchedule = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params;
@@ -26,7 +28,6 @@ export const editSchedule = catchAsyncErr(async (req, res, next) => {
     if (!schedule) {
         return next(new AppErr('not found', 404))
     }
-    
-    return res.status(201).json({ "message": " success", schedule })
+    return res.status(200).json({ "message": " success","statusCode":200, schedule })
 
 });

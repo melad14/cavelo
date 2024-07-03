@@ -8,12 +8,12 @@ export const getNotifications = catchAsyncErr(async (req, res, next) => {
 
     const notifications = await notificationModel.find().sort({ createdAt: -1 });
 
-    res.status(200).json({ "message": " success", notifications })
+    res.status(200).json({ "message": " success", "statusCode":200 ,notifications })
 
 });
 
 export const updateNotification = catchAsyncErr(async (req, res, next) => {
-    try {
+    
         const notification = await notificationModel.findById(req.params.id);
         if (!notification) {
             return next(new AppErr("Notification not found", 404));
@@ -25,10 +25,8 @@ export const updateNotification = catchAsyncErr(async (req, res, next) => {
 
         const notifications = await notificationModel.find().sort({ createdAt: -1 });
 
-        res.status(201).json({ "message": " success",  notifications});
-    } catch (error) {
-        return next(new AppErr(error.message, 500));
-    }
+        res.status(201).json({ "message": " success","statusCode":200 ,  notifications});
+ 
 });
 
 export const getOneNotification = catchAsyncErr(async (req, res, next) => {
@@ -43,7 +41,7 @@ const{id}=req.params
      await notification.save();
 
 
-        res.status(201).json({ "message": " success",  notification, });
+        res.status(201).json({ "message": " success","statusCode":200 ,  notification, });
  
 });
 

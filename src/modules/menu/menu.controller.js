@@ -25,9 +25,9 @@ export const createItem = catchAsyncErr(async (req, res, next) => {
     }
   }
     const result = new menuModel(req.body);
-   if(!result) return  next(new AppErr('failed create item', 200))
+   if(!result) return  next(new AppErr('failed create item', 400))
     await result.save();
-    res.status(200).json({ message: "success", result })
+    res.status(200).json({ "message": "success","statusCode":200 , result })
 })
 
 
@@ -38,9 +38,9 @@ export const editItem = catchAsyncErr(async (req, res, next) => {
         req.body.image = req.files['image']?.[0]?.path
     }
     const result = await menuModel.findByIdAndUpdate(id, req.body, { new: true })
-    if(!result) return  next(new AppErr('failed update item', 200))
+    if(!result) return  next(new AppErr('failed update item', 400))
 
-    res.status(200).json({ message: "success", result })
+    res.status(200).json({ "message": "success","statusCode":200 , result })
 })
 
 
@@ -48,7 +48,7 @@ export const getAllMenu = catchAsyncErr(async (req, res, next) => {
 
     const result = await menuModel.find()
 
-    res.status(200).json({ message: "success", result })
+    res.status(200).json({ "message": "success", "statusCode":200 ,result })
 })
 
 
@@ -56,7 +56,7 @@ export const getitem = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
     const result = await menuModel.findById(id)
 
-    res.status(200).json({ message: "success", result })
+    res.status(200).json({ "message": "success", "statusCode":200 ,result })
 })
 
 
@@ -65,6 +65,6 @@ export const deleteItem = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
 
     const result = await menuModel.findByIdAndDelete(id)
-    result && res.status(201).json({ message: "success" ,result})
+    result && res.status(200).json({ "message": "success" ,"statusCode":200 ,result})
 })
 
