@@ -48,7 +48,7 @@ const verifyOTP = catchAsyncErr(async (req, res, next) => {
     await userModel.updateOne({ phone }, { otp: null, otpExpires: null });
 
     let token = jwt.sign({ user }, `${process.env.TOKEN_SK}`);
-    res.status(200).json({ "message": "success", token });
+    res.status(200).json({ "message": "success","statusCode":"200" , token });
 });
 
 
@@ -57,7 +57,7 @@ const completeProfile = catchAsyncErr(async (req, res, next) => {
         req.body.image = req.files['image']?.[0]?.path;
         const result = await userModel.findByIdAndUpdate(req.user._id, req.body, { new: true });
         if (!result) return next(new AppErr("failed to complete profile", 400)); // 400 for client error
-        res.status(200).json({ message: "success", result });
+        res.status(200).json({ "message": "success", "statusCode":"200" ,result });
     } catch (error) {
         next(error);
     }
@@ -70,14 +70,14 @@ const editProfile = catchAsyncErr(async (req, res, next) => {
     }
     const result = await userModel.findByIdAndUpdate(id, req.body, { new: true });
 
-    res.status(200).json({ message: "success", result });
+    res.status(200).json({ 'message': "success","statusCode":"200" , result });
 });
 
 const getProfile = catchAsyncErr(async (req, res, next) => {
     const id = req.user._id
     const result = await userModel.findById(id)
 
-    res.status(200).json({ "message": " success", result })
+    res.status(200).json({ "message": " success","statusCode":"200" , result })
 })
 
 
@@ -90,7 +90,7 @@ const deleteAcc = catchAsyncErr(async (req, res, next) => {
 
     if (!user) return next(new AppErr("user not found or you are not authorized to delete this account", 200));
 
-    res.status(200).json({ message: "user deleted" });
+    res.status(200).json({ "message": "user deleted","statusCode":"200"  });
 
 });
 
