@@ -9,8 +9,8 @@ import * as dotenv from 'dotenv'
 import { AppErr } from './src/utils/AppErr.js';
 import { globalErr } from './src/middleware/globalErr.js';
 import cors from "cors"
-import http from 'http';
-import { Server } from 'socket.io';
+// import http from 'http';
+// import { Server } from 'socket.io';
 import userRouter from './src/modules/users/user.router.js';
 import menuRouter from './src/modules/menu/menu.router.js';
 import categoryRouter from './src/modules/category/category.router.js';
@@ -36,13 +36,14 @@ app.use(cors())
 
 app.use(express.json())
 
-const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: '*',
-        methods: ['GET', 'POST'],
-    },
-});
+
+// const server = http.createServer(app);
+// const io = new Server(server, {
+//     cors: {
+//         origin: '*',
+//         methods: ['GET', 'POST'],
+//     },
+// });
 
 
 
@@ -70,18 +71,18 @@ app.all('*', (req, res, next) => {
 app.use(globalErr)
 
 conn();
-io.on("connection", (socket) => {
+// io.on("connection", (socket) => {
 
-    socket.on("notification", (data) => {
+//     socket.on("notification", (data) => {
 
-        io.emit("newNotification", data);
-    });
+//         io.emit("newNotification", data);
+//     });
 
-    socket.on("disconnect", () => {
+//     socket.on("disconnect", () => {
 
-    });
-});
-server.listen(process.env.PORT || port, () => console.log(`runing.....`))
+//     });
+// });
+app.listen(process.env.PORT || port, () => console.log(`runing.....`))
 
 process.on('unhandledRejection', (err) => {
     console.log(err);

@@ -23,7 +23,7 @@ const signin = catchAsyncErr(async (req, res, next) => {
         await userModel.updateOne({ phone }, { otp, otpExpires });
         await sendSMSTest(phone, `Your OTP is ${otp}`);
     
-        res.status(200).json({ "message": "user created and OTP sent" });
+        res.status(200).json({ "message": "user created and OTP sent","statusCode":"200" });
     }
 else{
     const otp = generateOTP();
@@ -32,7 +32,7 @@ else{
 
     await sendSMSTest(phone, `Your OTP is ${otp}`);
 
-    res.status(200).json({ "message": "OTP sent" });
+    res.status(200).json({ "message": "OTP sent","statusCode":"200"  });
 }
    
 });
