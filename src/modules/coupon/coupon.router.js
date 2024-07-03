@@ -4,11 +4,11 @@ import { allowTo, protectedRoutes } from "../../middleware/protectedRoute.js";
 
 const couponRouter = express.Router()
 
-couponRouter.post('/create-coupon',protectedRoutes,allowTo('user'),createCopon)
-couponRouter.get('/get-all-coupon',getAllCopons)
+couponRouter.post('/create-coupon',protectedRoutes,allowTo('admin'),createCopon)
+couponRouter.get('/get-all-coupon',allowTo('admin'),getAllCopons)
 couponRouter.get('/get-coupon/:id',getCopon)
-couponRouter.put('/update-coupon/:id',protectedRoutes,allowTo('user'),updateCopon)
-couponRouter.delete('/delete-coupon/:id',protectedRoutes,allowTo('user'),deleteCopon)
+couponRouter.put('/update-coupon/:id',protectedRoutes,allowTo('admin'),updateCopon)
+couponRouter.delete('/delete-coupon/:id',protectedRoutes,allowTo('admin'),deleteCopon)
 
 
 export default couponRouter

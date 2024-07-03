@@ -6,10 +6,10 @@ const categoryRouter =express.Router()
 
 
 
-categoryRouter.post('/create-category',protectedRoutes,allowTo('user'),createCategory)
+categoryRouter.post('/create-category',protectedRoutes,allowTo('admin'),createCategory)
 categoryRouter.get('/get-categories',getAllCategory)
 categoryRouter.get('/get-category/:id',getCategory)
-categoryRouter.put('/edit-category/:id',protectedRoutes,allowTo('user'),updateCategory)
-categoryRouter.delete('/delete-category/:id',protectedRoutes,allowTo('user'),deleteCategory)
+categoryRouter.put('/edit-category/:id',protectedRoutes,allowTo('admin'),updateCategory)
+categoryRouter.delete('/delete-category/:id',protectedRoutes,allowTo('admin'),deleteCategory)
 
 export default categoryRouter

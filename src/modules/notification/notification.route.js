@@ -7,8 +7,8 @@ import { getNotSchema } from './notification.validation.js';
 
 const notificationRouter = express.Router();
 
-notificationRouter.get("/get-all-notifications", protectedRoutes, allowTo('user'), getNotifications);
-notificationRouter.put("/update-notification/:id", protectedRoutes, allowTo('user'),  validation(getNotSchema), updateNotification);
-notificationRouter.get("/get-notification/:id", protectedRoutes, allowTo('user'), validation(getNotSchema), getOneNotification);
+notificationRouter.get("/get-all-notifications", protectedRoutes, allowTo('user','admin'), getNotifications);
+notificationRouter.put("/update-notification/:id", protectedRoutes, allowTo('user','admin'),  validation(getNotSchema), updateNotification);
+notificationRouter.get("/get-notification/:id", protectedRoutes, allowTo('user','admin'), validation(getNotSchema), getOneNotification);
 
 export default notificationRouter;

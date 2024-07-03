@@ -8,7 +8,7 @@ reviewRouter.post('/create-review',protectedRoutes,allowTo( 'user'),createReview
 reviewRouter.get('/get-all-review',getAllReviews)
 reviewRouter.get('/get-review/:id',getReview)
 reviewRouter.put('/update-review/:id',protectedRoutes,allowTo('user'),updateReview)
-reviewRouter.delete('/delete-review/:id',protectedRoutes,allowTo('user'),deleteReview)
+reviewRouter.delete('/delete-review/:id',protectedRoutes,allowTo('user','admin'),deleteReview)
 
 
 export default reviewRouter

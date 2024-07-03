@@ -8,18 +8,18 @@ import { createItem, deleteItem, editItem, getAllMenu, getitem } from './menu.co
 let menuRouter = express.Router();
 
 
-menuRouter.post('/create-item', protectedRoutes, allowTo('user'),
+menuRouter.post('/create-item', protectedRoutes, allowTo('admin'),
     upload.fields([{ name: 'image', maxCount: 1 } ]), createItem);
 
 
-menuRouter.put('/edit-item/:id', protectedRoutes, allowTo('user'),
+menuRouter.put('/edit-item/:id', protectedRoutes, allowTo('admin'),
     upload.fields([ { name: 'image', maxCount: 1 }]), editItem);
 
 
-menuRouter.get('/get-item/:id', protectedRoutes, allowTo('user'), getitem);
-menuRouter.get('/get-menu', protectedRoutes, allowTo('user'), getAllMenu);
+menuRouter.get('/get-item/:id', protectedRoutes, allowTo('user','admin'), getitem);
+menuRouter.get('/get-menu', protectedRoutes, allowTo('user','admin'), getAllMenu);
 
-menuRouter.delete('/delete-item/:id', protectedRoutes, allowTo('user'), deleteItem);
+menuRouter.delete('/delete-item/:id', protectedRoutes, allowTo('admin'), deleteItem);
 
 
 

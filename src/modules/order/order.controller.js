@@ -30,9 +30,17 @@ const getSpecificorders = catchAsyncErr(async (req, res, next) => {
     if (!order) return next(new AppErr('order not found', 404))
     res.status(201).json({ "message": " success","statusCode":200, order })
 
+})
+
+
+const AdminGetOrder = catchAsyncErr(async (req, res, next) => {
+    const { id } = req.params
+    let order = await orderModel.findById(id).populate('cartItems.item').populate('assignedDeliveryPerson', 'name -_id')
+    if (!order) return next(new AppErr('order not found', 404))
+    res.status(201).json({ "message": " success","statusCode":200, order })
 
 })
-const AdminGetOrder = catchAsyncErr(async (req, res, next) => {
+const userGetOrder = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
     let order = await orderModel.findById(id).populate('cartItems.item').populate('assignedDeliveryPerson', 'name -_id')
     if (!order) return next(new AppErr('order not found', 404))
@@ -99,7 +107,7 @@ export {
     ctreateCashOrder,
     getSpecificorders,
     getAllorders, completeDelivry, completeInDoor,
-    paid, deliverd, AdminGetOrder
+    paid, deliverd, AdminGetOrder,userGetOrder
 
 
 }

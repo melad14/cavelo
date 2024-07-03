@@ -6,9 +6,9 @@ const tableRouter = express.Router();
 
 
 tableRouter.post('/create-reserv',protectedRoutes,allowTo('user'),createReservation)
-tableRouter.get('/get-all-reservs',protectedRoutes,allowTo('user'),getReservations);
+tableRouter.get('/get-all-reservs',protectedRoutes,allowTo('admin'),getReservations);
 
-tableRouter.get('/get-reserv/:id',protectedRoutes,allowTo('user'),getReservation)
+tableRouter.get('/get-reserv/:id',protectedRoutes,allowTo('user','admin'),getReservation)
 tableRouter.put('/update-reserv/:id',protectedRoutes,allowTo('user'),updateReservation)
 tableRouter.delete('/delete/:id',protectedRoutes,allowTo('user'),deleteReservation);
 

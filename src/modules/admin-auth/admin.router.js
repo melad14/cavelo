@@ -4,11 +4,11 @@ import { protectedRoutes, allowTo } from '../../middleware/protectedRoute.js';
 
 const adminRouter = express.Router();
 
-adminRouter.post('/create-admin',  protectedRoutes, allowTo('user'),create_admin);
-adminRouter.post('/signin-admin',  protectedRoutes, allowTo('user'),signIn_admin);
-adminRouter.post('/create-user',  protectedRoutes, allowTo('user'),createUser);
-adminRouter.get('/get-allUsers', protectedRoutes, allowTo('user'), getUsers);
-adminRouter.get('/get-user/:id', protectedRoutes, allowTo('user'), specificUser);
-adminRouter.put('/edit-user-role/:id', protectedRoutes, allowTo('user'), editUserRole);
+adminRouter.post('/create-admin',  protectedRoutes, allowTo('admin'),create_admin);
+adminRouter.post('/signin-admin',  protectedRoutes, allowTo('admin'),signIn_admin);
+adminRouter.post('/create-user',  protectedRoutes, allowTo('admin'),createUser);
+adminRouter.get('/get-allUsers', protectedRoutes, allowTo('admin'), getUsers);
+adminRouter.get('/get-user/:id', protectedRoutes, allowTo('admin'), specificUser);
+adminRouter.put('/edit-user-role/:id', protectedRoutes, allowTo('admin'), editUserRole);
 
 export default adminRouter

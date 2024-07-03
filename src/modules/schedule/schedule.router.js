@@ -6,9 +6,9 @@ import { addSchedule, editSchedule, getSchedules } from './schedule.controller.j
 const scheduleRouter  = express.Router()
 
 
-scheduleRouter.post('/add-schedule',  protectedRoutes, allowTo('delivery'),addSchedule)
-scheduleRouter.put('/edit-schedule/:id',  protectedRoutes, allowTo('delivery'),editSchedule)
-scheduleRouter.get('/get-schedule',  protectedRoutes, allowTo('delivery'),getSchedules)
+scheduleRouter.post('/add-schedule',  protectedRoutes, allowTo('admin'),addSchedule)
+scheduleRouter.put('/edit-schedule/:id',  protectedRoutes, allowTo('admin'),editSchedule)
+scheduleRouter.get('/get-schedule',  protectedRoutes, allowTo('admin'),getSchedules)
 
 
 export default scheduleRouter 
