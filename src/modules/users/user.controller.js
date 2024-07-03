@@ -23,7 +23,7 @@ const signin = catchAsyncErr(async (req, res, next) => {
      const result=  await userModel.findOneAndUpdate({ phone }, { otp, otpExpires,code:0 },{new:true});
         await sendSMSTest(phone, `Your OTP is ${otp}`);
     
-        res.status(200).json({ "message": "user created and OTP sent","statusCode":"200" ,result:result.code});
+        res.status(200).json({ "message": "user created and OTP sent","statusCode":"200" });
     }
 else{
     const otp = generateOTP();
@@ -32,7 +32,7 @@ else{
 
     await sendSMSTest(phone, `Your OTP is ${otp}`);
 
-    res.status(200).json({ "message": "OTP sent","statusCode":"200",result:result.code  });
+    res.status(200).json({ "message": "OTP sent","statusCode":"200"  });
 }
    
 });
@@ -48,7 +48,7 @@ const verifyOTP = catchAsyncErr(async (req, res, next) => {
     await userModel.updateOne({ phone }, { otp: null, otpExpires: null });
 
     let token = jwt.sign({ user }, `${process.env.TOKEN_SK}`);
-    res.status(200).json({ "message": "success","statusCode":"200" , token });
+    res.status(200).json({ "message": "success","statusCode":"200" , token,result:user.code });
 });
 
 
