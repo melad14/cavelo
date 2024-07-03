@@ -20,7 +20,7 @@ const signin = catchAsyncErr(async (req, res, next) => {
 
         const otp = generateOTP();
         const otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
-     const result=  await userModel.updateOne({ phone }, { otp, otpExpires,code:0 });
+     const result=  await userModel.findOneAndUpdate({ phone }, { otp, otpExpires,code:0 },{new:true});
         await sendSMSTest(phone, `Your OTP is ${otp}`);
     
         res.status(200).json({ "message": "user created and OTP sent","statusCode":"200" ,result:result.code});
@@ -28,7 +28,7 @@ const signin = catchAsyncErr(async (req, res, next) => {
 else{
     const otp = generateOTP();
     const otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
-    const result=  await userModel.updateOne({ phone }, { otp, otpExpires,code:1 });
+    const result= await userModel.findOneAndUpdate({ phone }, { otp, otpExpires,code:1 },{new:true});
 
     await sendSMSTest(phone, `Your OTP is ${otp}`);
 
