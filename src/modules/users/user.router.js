@@ -2,6 +2,8 @@ import express from 'express'
 import { completeProfile, editProfile, getProfile ,deleteAcc, signin, verifyOTP} from './user.controller.js';
 import { allowTo, protectedRoutes } from '../../middleware/protectedRoute.js';
 import { upload } from '../../utils/fileUp.js';
+import { validation } from './../../middleware/validation.js';
+import { signInSchema, verifySchema } from './user.validation.js';
 
 
 
@@ -11,8 +13,8 @@ let userRouter = express.Router();
 
 
 
-userRouter.post('/signin',  signin);
-userRouter.post('/verify',  verifyOTP);
+userRouter.post('/signin',validation(signInSchema)  ,signin);
+userRouter.post('/verify', validation(verifySchema) , verifyOTP);
 
 userRouter.put('/complete-profile', protectedRoutes, allowTo('user'),
     upload.fields([{ name: 'image', maxCount: 1 } ]), completeProfile);

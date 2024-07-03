@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 import { catchAsyncErr } from "../../utils/catcherr.js";
-import { AppErr } from './../../utils/AppErr.js';
+import { AppErr } from '../../utils/AppErr.js';
 import { userModel } from "../../../databases/models/users.js";
 import { sendSMSTest } from '../../emails/user.sms.js';
 
