@@ -29,6 +29,10 @@ const menuSchema = mongoose.Schema({
       price: Number,
     }]
   },
+  suggested: {
+    type: Boolean,
+    default: false
+  }
 
 }, {timestamps: true});
 

@@ -28,7 +28,7 @@ const signin = catchAsyncErr(async (req, res, next) => {
 else{
     const otp = generateOTP();
     const otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
-    const result= await userModel.findOneAndUpdate({ phone }, { otp, otpExpires,code:1 },{new:true});
+    const result= await userModel.findOneAndUpdate({ phone }, { otp, otpExpires },{new:true});
 
     await sendSMSTest(phone, `Your OTP is ${otp}`);
 
@@ -53,12 +53,13 @@ const verifyOTP = catchAsyncErr(async (req, res, next) => {
 
 
 const completeProfile = catchAsyncErr(async (req, res, next) => {
-
+    req.body.code=1
         const result = await userModel.findByIdAndUpdate(req.user._id, req.body, { new: true });
         if (!result) return next(new AppErr("failed to complete profile", 400)); // 400 for client error
         res.status(200).json({ "message": "success", "statusCode":200 ,result });
 
 });
+
 
 const editProfile = catchAsyncErr(async (req, res, next) => {
     const id = req.user._id

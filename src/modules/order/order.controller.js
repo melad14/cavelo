@@ -102,12 +102,22 @@ const paid = catchAsyncErr(async (req, res, next) => {
 
 
 
+const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
+    const userId = req.user._id;
+    
+    const orders = await orderModel.find({ user: userId })
+        .populate('cartItems.item')  
+        .populate('assignedDeliveryPerson', 'name -_id');
+ 
+    res.status(200).json({   "message": "Success",   "statusCode": 200,orders});
+});
+
 
 export {
     ctreateCashOrder,
     getSpecificorders,
     getAllorders, completeDelivry, completeInDoor,
-    paid, deliverd, AdminGetOrder,userGetOrder
+    paid, deliverd, AdminGetOrder,userGetOrder,userGetOrderHistory
 
 
 }

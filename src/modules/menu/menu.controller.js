@@ -68,3 +68,28 @@ export const deleteItem = catchAsyncErr(async (req, res, next) => {
     result && res.status(200).json({ "message": "success" ,"statusCode":200 ,result})
 })
 
+
+
+export const suggestItem = catchAsyncErr(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await menuModel.findByIdAndUpdate(id, { suggested: true }, { new: true });
+  if (!result) return next(new AppErr('Failed to suggest item', 400));
+
+  res.status(200).json({ "message": "success", "statusCode": 200, result });
+});
+
+export const unsuggestItem = catchAsyncErr(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await menuModel.findByIdAndUpdate(id, { suggested: false }, { new: true });
+  if (!result) return next(new AppErr('Failed to unsuggest item', 400));
+
+  res.status(200).json({ "message": "success", "statusCode": 200, result });
+});
+
+// Controller to get all suggested items
+export const getSuggestedItems = catchAsyncErr(async (req, res, next) => {
+  const result = await menuModel.find({ suggested: true });
+  if (!result) return next(new AppErr('No suggested items found', 404));
+
+  res.status(200).json({ "message": "success", "statusCode": 200, result });
+});

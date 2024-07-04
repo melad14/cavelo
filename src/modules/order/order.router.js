@@ -1,5 +1,5 @@
 import express from "express"
-import {   AdminGetOrder, completeDelivry, completeInDoor, ctreateCashOrder, deliverd, getAllorders, getSpecificorders, paid, userGetOrder } from "./order.controller.js"
+import {   AdminGetOrder, completeDelivry, completeInDoor, ctreateCashOrder, deliverd, getAllorders, getSpecificorders, paid, userGetOrder, userGetOrderHistory } from "./order.controller.js"
 import { allowTo, protectedRoutes } from "../../middleware/protectedRoute.js";
 
 const orderRouter = express.Router()
@@ -13,5 +13,6 @@ orderRouter.put('/complete-inDoor/:id',protectedRoutes,allowTo('admin'),complete
 orderRouter.put('/deliverd/:id',protectedRoutes,allowTo('admin'),deliverd)
 orderRouter.put('/paid/:id',protectedRoutes,allowTo('admin'),paid)
 
+orderRouter.get('/my-orders',protectedRoutes,allowTo('user'),userGetOrderHistory)
 
 export default orderRouter
