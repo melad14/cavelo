@@ -53,14 +53,11 @@ const verifyOTP = catchAsyncErr(async (req, res, next) => {
 
 
 const completeProfile = catchAsyncErr(async (req, res, next) => {
-    try {
-        req.body.image = req.files['image']?.[0]?.path;
+
         const result = await userModel.findByIdAndUpdate(req.user._id, req.body, { new: true });
         if (!result) return next(new AppErr("failed to complete profile", 400)); // 400 for client error
         res.status(200).json({ "message": "success", "statusCode":200 ,result });
-    } catch (error) {
-        next(error);
-    }
+
 });
 
 const editProfile = catchAsyncErr(async (req, res, next) => {

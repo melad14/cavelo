@@ -16,8 +16,7 @@ let userRouter = express.Router();
 userRouter.post('/signin',validation(signInSchema)  ,signin);
 userRouter.post('/verify', validation(verifySchema) , verifyOTP);
 
-userRouter.put('/complete-profile', protectedRoutes, allowTo('user'),
-    upload.fields([{ name: 'image', maxCount: 1 } ]), completeProfile);
+userRouter.post('/complete-profile', protectedRoutes, allowTo('user'), completeProfile);
 
 
 userRouter.put('/edit-profile', protectedRoutes, allowTo('user'),
