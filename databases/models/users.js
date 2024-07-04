@@ -31,7 +31,8 @@ const userSchema = mongoose.Schema({
     unique: true
   },
   image: {
-    type: String
+    type: String,
+    default:''
   },
 adresses: [{
     city: String,
