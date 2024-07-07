@@ -111,18 +111,15 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
             select: 'image name basePrice description _id'
         }) 
 
-        const filteredOrders = orders.map(order => ({
-           
-            cartItems: order.cartItems.map(cartItem => ({
-                item: {
-                    _id: cartItem.item._id,
-                    image: cartItem.item.image,
-                    name: cartItem.item.name,
-                    description: cartItem.item.description,
-                    basePrice: cartItem.item.basePrice,
-                }
+        const filteredItems = orders.flatMap(order => 
+            order.cartItems.map(cartItem => ({
+                _id: cartItem.item._id,
+                image: cartItem.item.image,
+                name: cartItem.item.name,
+                description: cartItem.item.description,
+                basePrice: cartItem.item.basePrice,
             }))
-        }));
+        );
     
 
     res.status(200).json({   "message": "Success",   "statusCode": 200,orders:filteredOrders.cartItems});
