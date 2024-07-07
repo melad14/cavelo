@@ -122,7 +122,7 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
         );
     
 
-    res.status(200).json({   "message": "Success",   "statusCode": 200,orders:filteredOrders.cartItems});
+    res.status(200).json({   "message": "Success",   "statusCode": 200,orders:filteredItems});
 });
 
 
