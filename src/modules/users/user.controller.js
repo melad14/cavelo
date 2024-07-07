@@ -61,6 +61,16 @@ const completeProfile = catchAsyncErr(async (req, res, next) => {
 });
 
 
+const uploadImage = catchAsyncErr(async (req, res, next) => {
+    const id = req.user._id
+    if (req.files['image']?.[0]?.path) {
+        req.body.image = req.files['image']?.[0]?.path;
+    }
+    const result = await userModel.findByIdAndUpdate(id, req.body, { new: true });
+
+    res.status(200).json({ 'message': "success","statusCode":200 , result });
+});
+
 const editProfile = catchAsyncErr(async (req, res, next) => {
     const id = req.user._id
     if (req.files['image']?.[0]?.path) {
@@ -98,7 +108,7 @@ const deleteAcc = catchAsyncErr(async (req, res, next) => {
 
 export {
     signin, verifyOTP,completeProfile, getProfile,
-    editProfile, deleteAcc, 
+    editProfile, deleteAcc, uploadImage
 }
 
 

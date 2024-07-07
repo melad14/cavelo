@@ -1,5 +1,5 @@
 import express from 'express'
-import { completeProfile, editProfile, getProfile ,deleteAcc, signin, verifyOTP} from './user.controller.js';
+import { completeProfile, editProfile, getProfile ,deleteAcc, signin, verifyOTP, uploadImage} from './user.controller.js';
 import { allowTo, protectedRoutes } from '../../middleware/protectedRoute.js';
 import { upload } from '../../utils/fileUp.js';
 import { validation } from './../../middleware/validation.js';
@@ -18,6 +18,9 @@ userRouter.post('/verify', validation(verifySchema) , verifyOTP);
 
 userRouter.post('/complete-profile', protectedRoutes, allowTo('user'), completeProfile);
 
+
+userRouter.post('/upload-pic', protectedRoutes, allowTo('admin','user'),
+    upload.fields([ { name: 'image', maxCount: 1 }]),   uploadImage);
 
 userRouter.put('/edit-profile', protectedRoutes, allowTo('user'),
     upload.fields([ { name: 'image', maxCount: 1 }]),   editProfile);

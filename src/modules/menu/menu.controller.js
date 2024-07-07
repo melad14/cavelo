@@ -5,7 +5,7 @@ import { catchAsyncErr } from "../../utils/catcherr.js";
 
 export const createItem = catchAsyncErr(async (req, res, next) => {
 
-    if( req.files['image']?.[0]?.path){
+    if( req.files){
         req.body.image = req.files['image']?.[0]?.path
     }
       // Parse the sizes and extraIngredientPrices fields from JSON strings
@@ -46,7 +46,7 @@ export const editItem = catchAsyncErr(async (req, res, next) => {
 
 export const getAllMenu = catchAsyncErr(async (req, res, next) => {
 
-    const result = await menuModel.find()
+    const result = await menuModel.find().select('image name basePrice description _id');
 
     res.status(200).json({ "message": "success", "statusCode":200 ,result })
 })
@@ -88,7 +88,7 @@ export const unsuggestItem = catchAsyncErr(async (req, res, next) => {
 
 // Controller to get all suggested items
 export const getSuggestedItems = catchAsyncErr(async (req, res, next) => {
-  const result = await menuModel.find({ suggested: true });
+  const result = await menuModel.find({ suggested: true }).select('image name basePrice description _id');
   if (!result) return next(new AppErr('No suggested items found', 404));
 
   res.status(200).json({ "message": "success", "statusCode": 200, result });
