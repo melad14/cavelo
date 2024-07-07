@@ -6,7 +6,7 @@ import { catchAsyncErr } from '../../utils/catcherr.js';
 
 
 export const createCategory = catchAsyncErr(async (req, res, next) => {
-    req.body.image = req.file?.filename
+    
     const result = new CategoryModel(req.body)
     if (!result) return next(new AppErr('failed create category', 400))
     await result.save()
@@ -33,9 +33,6 @@ export const getCategory = catchAsyncErr(async (req, res, next) => {
 
 export const updateCategory = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
-    if (req.file) {
-        req.body.image = req.file?.filename
-    }
     const result = await CategoryModel.findByIdAndUpdate(id, req.body, { new: true })
     res.status(201).json({ "message": "success","statusCode":200 , result })
 })
