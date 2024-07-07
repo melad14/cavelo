@@ -110,8 +110,22 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
             path: 'cartItems.item',
             select: 'image name basePrice description _id'
         }) 
-    
-    res.status(200).json({   "message": "Success",   "statusCode": 200,orders});
+
+        const filteredOrders = orders.map(order => ({
+            ...order._doc,
+            cartItems: order.cartItems.map(cartItem => ({
+                ...cartItem._doc,
+                item: {
+                    _id: cartItem.item._id,
+                    image: cartItem.item.image,
+                    name: cartItem.item.name,
+                    description: cartItem.item.description,
+                    basePrice: cartItem.item.basePrice,
+                }
+            }))
+        }));
+
+    res.status(200).json({   "message": "Success",   "statusCode": 200,orders:filteredOrders});
 });
 
 
