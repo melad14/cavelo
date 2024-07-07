@@ -106,9 +106,11 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
     const userId = req.user._id;
     
     const orders = await orderModel.find({ user: userId })
-        .populate('cartItems.item')  
-        .select('image name basePrice description _id');
- 
+        .populate({
+            path: 'cartItems.item',
+            select: 'image name basePrice description _id'
+        }) 
+    
     res.status(200).json({   "message": "Success",   "statusCode": 200,orders});
 });
 
