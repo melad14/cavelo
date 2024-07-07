@@ -107,7 +107,7 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
     
     const orders = await orderModel.find({ user: userId })
         .populate('cartItems.item')  
-        .populate('assignedDeliveryPerson', 'name -_id');
+        .populate('assignedDeliveryPerson', 'name -_id');select('image name basePrice description _id');
  
     res.status(200).json({   "message": "Success",   "statusCode": 200,orders});
 });
