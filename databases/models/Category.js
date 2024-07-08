@@ -6,7 +6,6 @@ const categorySchema=mongoose.Schema({
         unique:[true,'category name is required'],
         require:true,
     },
-    image:String
 
 },{timestamps:true})
 

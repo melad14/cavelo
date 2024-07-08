@@ -11,9 +11,9 @@ const menuSchema = mongoose.Schema({
     type: String
   },
   category: {
-    type: mongoose.Types.ObjectId,
-    ref:'category'
+    type: String,
   },
+  
   basePrice: {
     type: Number
   },
