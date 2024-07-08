@@ -33,7 +33,7 @@ const addTocart = catchAsyncErr(async (req, res, next) => {
     ;
         calctotalPrice(newcart)
         await newcart.save()
-        return res.status(201).json({ "message": " success","statusCode":200 , newcart })
+        return res.status(201).json({ "message": " success","statusCode":200  })
     }
 
     let find = cartExist.cartItems.find((elm) => elm.item == req.body.item)
@@ -49,7 +49,7 @@ const addTocart = catchAsyncErr(async (req, res, next) => {
     calctotalPrice(cartExist)
     await cartExist.save()
     
-    res.status(201).json({ "message": " success","statusCode":200 , cart: cartExist })
+    res.status(201).json({ "message": " success","statusCode":200  })
 
 })
 
@@ -61,7 +61,7 @@ const removeFromCart = catchAsyncErr(async (req, res, next) => {
     if (result.discount) {
         result.totalPriceAfterDiscount = result.totalPrice - (result.totalPrice * result.discount) / 100
     }
-    res.status(200).json({ "message": " success","statusCode":200 , result })
+    res.status(200).json({ "message": " success","statusCode":200  })
 })
 
 
@@ -79,7 +79,7 @@ const updateQuantity = catchAsyncErr(async (req, res, next) => {
         cartExist.totalPriceAfterDiscount = cartExist.totalPrice - (cartExist.totalPrice * cartExist.discount) / 100
     }
     await cartExist.save()
-    res.status(201).json({ "message": " success","statusCode":200 , cartExist })
+    res.status(201).json({ "message": " success","statusCode":200  })
 })
 
 
