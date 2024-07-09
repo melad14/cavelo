@@ -6,9 +6,9 @@ const reviewSchema = mongoose.Schema({
         required: true,
         trim: true,
     },
-    item: {
+    order: {
         type: mongoose.Types.ObjectId,
-        ref: "menu"
+        ref: "order"
     },
     user: {
         type: mongoose.Types.ObjectId,

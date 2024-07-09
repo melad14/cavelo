@@ -7,7 +7,7 @@ import { reviewModel } from './../../../databases/models/reviews.js';
 export const createReview = catchAsyncErr(async (req, res, next) => {
      req.body.user=req.user._id
 
-     let isReview=await reviewModel.findOne({user:req.user._id,item:req.body.item})
+     let isReview=await reviewModel.findOne({user:req.user._id,order:req.body.item})
      if(isReview)return  next(new AppErr(`you already made a review about this item`, 401))
 
     const result = new reviewModel(req.body)
