@@ -5,8 +5,8 @@ import { catchAsyncErr } from "../../utils/catcherr.js";
 
 
 export const addSchedule = catchAsyncErr(async (req, res, next) => {
-    const { day, startTime, endTime } = req.body;
-    const schedule = new Schedule({ day, startTime, endTime });
+  
+    const schedule = new Schedule(req.body);
     await schedule.save();
     return res.status(200).json({ "message": " success","statusCode":200, schedule })
 
@@ -22,9 +22,9 @@ export const getSchedules = catchAsyncErr(async (req, res, next) => {
 
 export const editSchedule = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params;
-    const {startTime, endTime} = req.body;
+   
 
-    const schedule = await Schedule.findByIdAndUpdate(id,{startTime, endTime},{new:true});
+    const schedule = await Schedule.findByIdAndUpdate(id,req.body,{new:true});
     if (!schedule) {
         return next(new AppErr('not found', 404))
     }

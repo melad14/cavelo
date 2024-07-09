@@ -4,7 +4,7 @@ import { catchAsyncErr } from "../../utils/catcherr.js";
 import jwt from 'jsonwebtoken';
 
 
-export const create_admin = catchAsyncErr(async (req, res, next) => {
+export const create_account = catchAsyncErr(async (req, res, next) => {
     const { first_name,last_name,phone,role,email } = req.body
     let user = await userModel.findOne({ phone });
     if (user) return next(new AppErr("already exist", 501))
@@ -19,7 +19,7 @@ export const signIn_admin = catchAsyncErr(async (req, res, next) => {
     const { phone } = req.body
     let user = await userModel.findOne({ phone })
     if (!user) {
-        return next(new AppErr("incorrect phone or password", 501))
+        return next(new AppErr("incorrect phone ", 501))
     }
     let token = jwt.sign({ user }, `${process.env.TOKEN_SK}`)
     res.json({ "message": "success","statusCode":200, token })

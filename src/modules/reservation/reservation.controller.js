@@ -7,7 +7,8 @@ import { catchAsyncErr } from './../../utils/catcherr.js';
 export const createReservation =catchAsyncErr( async (req, res, next) => {
         const id=req.user._id
         let user=await userModel.findById(id)
-        req.body.name=user.name
+        req.body.first_name=user.first_name
+        req.body.last_name=user.last_name
         req.body.email=user.email
 
         const reservation = new Reservation(req.body);

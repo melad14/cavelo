@@ -54,8 +54,8 @@ export const getAllMenuByCat = catchAsyncErr(async (req, res, next) => {
 
   const { category } = req.body
   const result = await menuModel.find({category}).select('image name basePrice description _id');
-
-  res.status(200).json({ "message": "success", "statusCode": 200, result })
+ 
+  res.status(200).json({ "message": "successsssssssss", "statusCode": 200, result })
 })
 
 

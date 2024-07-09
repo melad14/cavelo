@@ -1,10 +1,10 @@
 import express from 'express'
-import {  create_admin, editUserRole, getUsers, signIn_admin, specificUser } from './admin.controller.js';
+import {  create_account, editUserRole, getUsers, signIn_admin, specificUser } from './admin.controller.js';
 import { protectedRoutes, allowTo } from '../../middleware/protectedRoute.js';
 
 const adminRouter = express.Router();
 
-adminRouter.post('/create-admin',  protectedRoutes, allowTo('admin'),create_admin);
+adminRouter.post('/create-account',  protectedRoutes, allowTo('admin'),create_account);
 adminRouter.post('/signin-admin',  protectedRoutes, allowTo('admin'),signIn_admin);
 adminRouter.get('/get-allUsers', protectedRoutes, allowTo('admin'), getUsers);
 adminRouter.get('/get-user/:id', protectedRoutes, allowTo('admin'), specificUser);
