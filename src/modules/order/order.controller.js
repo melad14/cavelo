@@ -113,6 +113,7 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
 
         const filteredItems = orders.flatMap(order => 
             order.cartItems.map(cartItem => ({
+                
                 _id: cartItem.item._id,
                 image: cartItem.item.image,
                 name: cartItem.item.name,
@@ -120,6 +121,7 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
                 basePrice: cartItem.item.basePrice,
             }))
         );
+        console.log(filteredItems);
     
 
     res.status(200).json({   "message": "Success",   "statusCode": 200,orders:filteredItems});
