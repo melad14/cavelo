@@ -14,18 +14,18 @@ const menuSchema = mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: 'category'
   },
-  
+
   basePrice: {
     type: Number
   },
   sizes: {
-    type:[{
+    type: [{
       name: String,
       price: Number,
     }]
   },
   extraIngredientPrices: {
-    type:[{
+    type: [{
       name: String,
       price: Number,
     }]
@@ -35,7 +35,18 @@ const menuSchema = mongoose.Schema({
     default: false
   }
 
-}, {timestamps: true});
+}, { timestamps: true });
+
+
+menuSchema.virtual('myReviews', {
+  ref: 'review',
+  localField: '_id',
+  foreignField: 'menu'
+})
+
+menuSchema.pre(/^find/, function () {
+  this.populate('myReviews')
+})
 
 export const menuModel = mongoose.model('menu', menuSchema);
 
