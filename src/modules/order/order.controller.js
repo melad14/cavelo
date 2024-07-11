@@ -4,7 +4,15 @@ import { AppErr } from "../../utils/AppErr.js";
 import { catchAsyncErr } from "../../utils/catcherr.js"
 import { orderModel } from './../../../databases/models/Order.js';
 
+import Pusher from 'pusher';
 
+const pusher = new Pusher({
+    appId: "1832769",
+    key: "74fa23b5f9fdd3fa37f0",
+    secret: "c59f35157bcebbfb400a",
+    cluster: "eu",
+    useTLS: true
+  });
 
 const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 
@@ -12,13 +20,16 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
     if (!cart) return next(new AppErr('cart not found', 200))
     req.body.user = req.user._id
     req.body.cartItems = cart.cartItems
+    req.body.totalOrderPrice = cart.totalPriceAfterDiscount
     const order = new orderModel(req.body)
     await order.save()
 
     if (order) {
 
         await cartModel.findOneAndDelete({ user: req.user._id })
-        return res.status(201).json({ "message": " success","statusCode":200, order })
+        pusher.trigger('cavelo', 'newOrder', order);
+
+        return res.status(200).json({ "message": " success","statusCode":200, order })
     } else {
         return next(new AppErr('order not found', 404))
     }
@@ -26,32 +37,45 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 
 const getSpecificorders = catchAsyncErr(async (req, res, next) => {
 
-    let order = await orderModel.find({ user: req.user._id }).populate('cartItems.item').populate('assignedDeliveryPerson', 'name -_id')
+    let order = await orderModel.find({ user: req.user._id }).populate({
+        path: 'cartItems.item',
+        select: 'image name basePrice description _id'
+    })
+    .populate('assignedDeliveryPerson', 'name -_id')
     if (!order) return next(new AppErr('order not found', 404))
-    res.status(201).json({ "message": " success","statusCode":200, order })
+    res.status(200).json({ "message": " success","statusCode":200, order })
 
 })
 
 
 const AdminGetOrder = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
-    let order = await orderModel.findById(id).populate('cartItems.item').populate('assignedDeliveryPerson', 'name -_id')
+    let order = await orderModel.findById(id).populate({
+        path: 'cartItems.item',
+        select: 'image name basePrice description _id'
+    }).populate('assignedDeliveryPerson', 'name -_id')
     if (!order) return next(new AppErr('order not found', 404))
-    res.status(201).json({ "message": " success","statusCode":200, order })
+    res.status(200).json({ "message": " success","statusCode":200, order })
 
 })
 const userGetOrder = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
-    let order = await orderModel.findById(id).populate('cartItems.item').populate('assignedDeliveryPerson', 'name -_id')
+    let order = await orderModel.findById(id).populate({
+        path: 'cartItems.item',
+        select: 'image name basePrice description _id'
+    }).populate('assignedDeliveryPerson', 'name -_id')
     if (!order) return next(new AppErr('order not found', 404))
-    res.status(201).json({ "message": " success","statusCode":200, order })
+    res.status(200).json({ "message": " success","statusCode":200, order })
 
 })
 const getAllorders = catchAsyncErr(async (req, res, next) => {
 
-    let orders = await orderModel.find().populate('cartItems.item').populate('assignedDeliveryPerson', 'name -_id')
+    let orders = await orderModel.find().populate({
+        path: 'cartItems.item',
+        select: 'image name basePrice description _id'
+    }).populate('assignedDeliveryPerson', 'name -_id')
     if (!orders) return next(new AppErr('orders not found', 404))
-    res.status(201).json({ "message": " success","statusCode":200, orders })
+    res.status(200).json({ "message": " success","statusCode":200, orders })
 
 })
 
@@ -88,7 +112,7 @@ const deliverd = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
     let order = await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
     await order.populate('assignedDeliveryPerson', 'name -_id')
-    res.status(201).json({ "message": " success","statusCode":200, order })
+    res.status(200).json({ "message": " success","statusCode":200, order })
 
 })
 const paid = catchAsyncErr(async (req, res, next) => {
@@ -96,7 +120,7 @@ const paid = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
     let order = await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
     await order.populate('assignedDeliveryPerson', 'name -_id')
-    res.status(201).json({ "message": " success","statusCode":200, order })
+    res.status(200).json({ "message": " success","statusCode":200, order })
 
 })
 
@@ -121,7 +145,7 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
                 basePrice: cartItem.item.basePrice,
             }))
         );
-        console.log(filteredItems);
+   
     
 
     res.status(200).json({   "message": "Success",   "statusCode": 200,orders:filteredItems});

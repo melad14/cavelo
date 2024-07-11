@@ -22,6 +22,8 @@
     "multer-storage-cloudinary": "^4.0.0",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.13",
+    "pusher": "^5.2.0",
+    "pusher-js": "^8.4.0-rc2",
     "qrcode": "^1.5.3",
     "textflow.js": "^0.1.4",
     "uuid": "^9.0.1",

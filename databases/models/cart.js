@@ -8,15 +8,23 @@ const cartSchema = mongoose.Schema({
     },
     cartItems: [{
         item: {
-            type: mongoose.Types.ObjectId,
-            ref: 'menu'
+          type: mongoose.Types.ObjectId,
+          ref: 'menu'
         },
         quantity: {
-            type: Number,
-            default: 1
+          type: Number,
+          default: 1
         },
-        basePrice: Number
-    }],
+        basePrice: Number,
+        size: {
+          name: String,
+          price: Number
+        },
+        extraIngredients: [{
+          name: String,
+          price: Number
+        }]
+      }],
 
     totalPrice: Number,
 

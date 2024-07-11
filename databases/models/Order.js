@@ -11,8 +11,19 @@ const orderSchema = mongoose.Schema({
       type: mongoose.Types.ObjectId,
       ref: 'menu'
     },
-    quantity: Number,
-    basePrice: Number
+    quantity: {
+      type: Number,
+      default: 1
+    },
+    basePrice: Number,
+    size: {
+      name: String,
+      price: Number
+    },
+    extraIngredients: [{
+      name: String,
+      price: Number
+    }]
   }],
 
   totalOrderPrice: Number,
@@ -65,6 +76,18 @@ const orderSchema = mongoose.Schema({
 
 }, { timestamps: true })
 
+
+orderSchema.virtual('myReviews',{
+  ref:'review',
+  localField:'_id',
+  foreignField :'order'
+})
+
+orderSchema.set('toJSON', { virtuals: true });
+
+orderSchema.pre(/^find/,function(){
+  this.populate('myReviews')
+})
 
 export const orderModel = mongoose.model('order', orderSchema)
 

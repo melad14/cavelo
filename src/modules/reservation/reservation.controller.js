@@ -4,6 +4,18 @@ import { AppErr } from './../../utils/AppErr.js';
 import { catchAsyncErr } from './../../utils/catcherr.js';
 
 
+
+import Pusher from 'pusher';
+
+const pusher = new Pusher({
+    appId: "1832769",
+    key: "74fa23b5f9fdd3fa37f0",
+    secret: "c59f35157bcebbfb400a",
+    cluster: "eu",
+    useTLS: true
+  });
+
+
 export const createReservation =catchAsyncErr( async (req, res, next) => {
         const id=req.user._id
         let user=await userModel.findById(id)
@@ -14,7 +26,8 @@ export const createReservation =catchAsyncErr( async (req, res, next) => {
         const reservation = new Reservation(req.body);
         if(!reservation) return  next(new AppErr('error creating reservation', 400))
         await reservation.save();
-        res.status(201).json({ "message": "success", "statusCode":200,data: reservation });
+        pusher.trigger('cavelo', 'newReservation', reservation);
+        res.status(200).json({ "message": "success", "statusCode":200,data: reservation });
 
 });
 
@@ -52,6 +65,6 @@ export const deleteReservation =catchAsyncErr( async (req, res, next) => {
         const reservation = await Reservation.findByIdAndDelete(req.params.id);
         if (!reservation)  return next(new AppErr('Reservation not found', 404));
     
-        res.status(201).json({ "message": "success" ,"statusCode":200,})
+        res.status(200).json({ "message": "success" ,"statusCode":200,})
 
 });

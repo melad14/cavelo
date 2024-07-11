@@ -21,7 +21,7 @@ export const deliverd = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
     let order = await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
     await order.populate('assignedDeliveryPerson','name -_id')
-    res.status(201).json({ "message": " success","statusCode":200 , order })
+    res.status(200).json({ "message": " success","statusCode":200 , order })
 
 })
 
@@ -31,6 +31,6 @@ export const paid = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
     let order = await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
     await order.populate('assignedDeliveryPerson','name -_id')
-    res.status(201).json({ "message": " success","statusCode":200 , order })
+    res.status(200).json({ "message": " success","statusCode":200 , order })
 
 })

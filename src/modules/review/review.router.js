@@ -4,7 +4,7 @@ import { allowTo, protectedRoutes } from "../../middleware/protectedRoute.js";
 
 const reviewRouter = express.Router()
 
-reviewRouter.post('/create-review',protectedRoutes,allowTo( 'user'),createReview)
+reviewRouter.post('/create-review',protectedRoutes,allowTo( 'user','admin'),createReview)
 reviewRouter.get('/get-all-review',getAllReviews)
 reviewRouter.get('/get-review/:id',getReview)
 reviewRouter.put('/update-review/:id',protectedRoutes,allowTo('user'),updateReview)

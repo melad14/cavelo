@@ -25,7 +25,7 @@ export const updateNotification = catchAsyncErr(async (req, res, next) => {
 
         const notifications = await notificationModel.find().sort({ createdAt: -1 });
 
-        res.status(201).json({ "message": " success","statusCode":200 ,  notifications});
+        res.status(200).json({ "message": " success","statusCode":200 ,  notifications});
  
 });
 
@@ -41,7 +41,7 @@ const{id}=req.params
      await notification.save();
 
 
-        res.status(201).json({ "message": " success","statusCode":200 ,  notification, });
+        res.status(200).json({ "message": " success","statusCode":200 ,  notification, });
  
 });
 

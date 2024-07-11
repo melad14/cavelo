@@ -8,13 +8,13 @@ import { coponModel } from './../../../databases/models/coupon.js';
 export const createCopon = catchAsyncErr(async (req, res, next) => {
     const result = new coponModel(req.body)
     await result.save()
-    res.status(201).json({ "message": " success","statusCode":200 , result })
+    res.status(200).json({ "message": " success","statusCode":200 , result })
 })
 
 export const getAllCopons = catchAsyncErr(async (req, res,next) => {
     const result = await coponModel.find()
 
-    res.status(201).json({ "message": "success","statusCode":200 ,result })
+    res.status(200).json({ "message": "success","statusCode":200 ,result })
 })
 
 
@@ -41,7 +41,7 @@ export const deleteCopon = catchAsyncErr(async (req, res, next) => {
 
     const result = await coponModel.findByIdAndDelete(id)
     !result && next(new AppErr('coupon not found', 404))
-    result && res.status(201).json({ "message": "success" ,"statusCode":200 })
+    result && res.status(200).json({ "message": "success" ,"statusCode":200 })
 })
 
  

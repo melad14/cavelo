@@ -38,15 +38,6 @@ const menuSchema = mongoose.Schema({
 }, { timestamps: true });
 
 
-menuSchema.virtual('myReviews', {
-  ref: 'review',
-  localField: '_id',
-  foreignField: 'menu'
-})
-
-menuSchema.pre(/^find/, function () {
-  this.populate('myReviews')
-})
 
 export const menuModel = mongoose.model('menu', menuSchema);
 

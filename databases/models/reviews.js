@@ -24,7 +24,7 @@ const reviewSchema = mongoose.Schema({
 }, { timestamps: true })
 
 reviewSchema.pre(/^find/,function(){
-    this.populate('user','first_name laset_name -_id')
+    this.populate('user','first_name last_name -_id')
 })
 
 export const reviewModel = mongoose.model('review', reviewSchema)
