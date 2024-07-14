@@ -5,6 +5,7 @@ import { catchAsyncErr } from "../../utils/catcherr.js"
 import { orderModel } from './../../../databases/models/Order.js';
 
 import Pusher from 'pusher';
+import { notificationModel } from './../../../databases/models/notifcation.js';
 
 const pusher = new Pusher({
     appId: "1832769",
@@ -28,7 +29,15 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 
         await cartModel.findOneAndDelete({ user: req.user._id })
         pusher.trigger('cavelo', 'newOrder', order);
-
+  
+        const notification = new notificationModel({
+            title: "New order Assigned",
+            message: `You have been assigned a new order. Order ID: ${order._id}`,
+            notid: req.user.first_name
+          });
+          await notification.save();
+        
+         
         return res.status(200).json({ "message": " success","statusCode":200, order })
     } else {
         return next(new AppErr('order not found', 404))
@@ -42,6 +51,7 @@ const getSpecificorders = catchAsyncErr(async (req, res, next) => {
         select: 'image name basePrice description _id'
     })
     .populate('assignedDeliveryPerson', 'name -_id')
+    .populate('user', 'first_name last_name -_id')
     if (!order) return next(new AppErr('order not found', 404))
     res.status(200).json({ "message": " success","statusCode":200, order })
 

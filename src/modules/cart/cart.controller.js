@@ -24,10 +24,9 @@ const addTocart = catchAsyncErr(async (req, res, next) => {
   let menuItem = await menuModel.findById(item);
   if (!menuItem) return next(new AppErr(`Item not found`, 404));
 
-  // Calculate the base price
   req.body.basePrice = menuItem.basePrice;
 
-  // Add size price if selected
+
   if (size) {
     const selectedSize = menuItem.sizes.find(s => s.name === size);
     if (selectedSize) {
@@ -39,7 +38,7 @@ const addTocart = catchAsyncErr(async (req, res, next) => {
     }
   }
 
-  // Add extra ingredients prices if selected
+
   if (extraIngredients && extraIngredients.length > 0) {
     req.body.extraIngredients = extraIngredients.map(extra => {
       const selectedExtra = menuItem.extraIngredientPrices.find(e => e.name === extra);
@@ -52,7 +51,7 @@ const addTocart = catchAsyncErr(async (req, res, next) => {
     });
   }
 
-  // Find the cart for the user
+
   let cartExist = await cartModel.findOne({ user: req.user._id });
   if (!cartExist) {
     let newCart = new cartModel({
@@ -70,7 +69,7 @@ const addTocart = catchAsyncErr(async (req, res, next) => {
     return res.status(200).json({ "message": "success", "statusCode": 200 });
   }
 
-  // Check if the item with the same size and extras already exists in the cart
+
   let find = cartExist.cartItems.find(elm =>
     elm.item.toString() === req.body.item &&
     elm.size?.name === req.body.size?.name &&
@@ -93,6 +92,7 @@ const addTocart = catchAsyncErr(async (req, res, next) => {
   res.status(200).json({ "message": "success", "statusCode": 200 });
 });
 
+
 const removeFromCart = catchAsyncErr(async (req, res, next) => {
   const result = await cartModel.findOneAndUpdate(
     { user: req.user._id },
@@ -110,6 +110,7 @@ const removeFromCart = catchAsyncErr(async (req, res, next) => {
   res.status(200).json({ "message": "success", "statusCode": 200 });
 });
 
+
 const updateQuantity = catchAsyncErr(async (req, res, next) => {
   let cartExist = await cartModel.findOne({ user: req.user._id });
   if (!cartExist) return next(new AppErr(`Cart not found`, 404));
@@ -124,7 +125,9 @@ const updateQuantity = catchAsyncErr(async (req, res, next) => {
   res.status(200).json({ "message": "success", "statusCode": 200 });
 });
 
+
 const applyCoupon = catchAsyncErr(async (req, res, next) => {
+
   let coupon = await coponModel.findOne({ code: req.body.code, expire: { $gt: Date.now() } });
   if (!coupon) return next(new AppErr(`Coupon not available`, 404));
 
@@ -135,6 +138,7 @@ const applyCoupon = catchAsyncErr(async (req, res, next) => {
 
   res.status(200).json({ "message": "success", "statusCode": 200, cart });
 });
+
 
 const getLoggedUserCart = catchAsyncErr(async (req, res, next) => {
   let cart = await cartModel.findOne({ user: req.user._id }).populate({

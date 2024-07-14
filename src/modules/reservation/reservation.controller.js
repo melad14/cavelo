@@ -1,3 +1,4 @@
+import { notificationModel } from "../../../databases/models/notifcation.js";
 import Reservation from "../../../databases/models/reservation.js";
 import { userModel } from "../../../databases/models/users.js";
 import { AppErr } from './../../utils/AppErr.js';
@@ -27,6 +28,12 @@ export const createReservation =catchAsyncErr( async (req, res, next) => {
         if(!reservation) return  next(new AppErr('error creating reservation', 400))
         await reservation.save();
         pusher.trigger('cavelo', 'newReservation', reservation);
+        const notification = new notificationModel({
+                title: "New reservation Assigned",
+                message: `You have been assigned a new reservation. reservation ID: ${reservation._id}`,
+                notid: user.first_name
+              });
+              await notification.save();
         res.status(200).json({ "message": "success", "statusCode":200,data: reservation });
 
 });
