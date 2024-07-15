@@ -3,9 +3,8 @@ import { userModel } from "../../../databases/models/users.js";
 import { AppErr } from "../../utils/AppErr.js";
 import { catchAsyncErr } from "../../utils/catcherr.js"
 import { orderModel } from './../../../databases/models/Order.js';
-
-import Pusher from 'pusher';
 import { notificationModel } from './../../../databases/models/notifcation.js';
+import Pusher from 'pusher';
 
 const pusher = new Pusher({
     appId: "1832769",
@@ -46,12 +45,7 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 
 const getSpecificorders = catchAsyncErr(async (req, res, next) => {
 
-    let order = await orderModel.find({ user: req.user._id }).populate({
-        path: 'cartItems.item',
-        select: 'image name basePrice description _id'
-    })
-    .populate('assignedDeliveryPerson', 'name -_id')
-    .populate('user', 'first_name last_name -_id')
+    let order = await orderModel.find({ user: req.user._id })
     if (!order) return next(new AppErr('order not found', 404))
     res.status(200).json({ "message": " success","statusCode":200, order })
 
@@ -80,10 +74,7 @@ const userGetOrder = catchAsyncErr(async (req, res, next) => {
 })
 const getAllorders = catchAsyncErr(async (req, res, next) => {
 
-    let orders = await orderModel.find().populate({
-        path: 'cartItems.item',
-        select: 'image name basePrice description _id'
-    }).populate('assignedDeliveryPerson', 'name -_id')
+    let orders = await orderModel.find()
     if (!orders) return next(new AppErr('orders not found', 404))
     res.status(200).json({ "message": " success","statusCode":200, orders })
 
