@@ -147,7 +147,7 @@ const getLoggedUserCart = catchAsyncErr(async (req, res, next) => {
 });
  
 
-  res.status(200).json({ "message": "success", "statusCode": 200, cart });
+  res.status(200).json({ "message": "successs", "statusCode": 200, cart });
 });
 
 export {
