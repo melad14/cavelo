@@ -92,20 +92,17 @@ const completeInDoor = catchAsyncErr(async (req, res, next) => {
 
 const completeDelivry = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params;
-    const { deliveryPersonName } = req.body;
+    const { deliveryPerson } = req.body;
 
-    let order = await orderModel.findByIdAndUpdate(id, { iscomplete: true }, { new: true });
+    let order = await orderModel.findByIdAndUpdate(id, { iscomplete: true , assignedDeliveryPerson:deliveryPerson }, { new: true });
 
     if (!order) return next(new AppErr('Order not found', 404));
 
-    const deliveryPerson = await userModel.findOne({ name: deliveryPersonName, role: 'delivery' });
-    if (!deliveryPerson) return next(new AppErr('Delivery person not found', 404));
-
-    order.assignedDeliveryPerson = deliveryPerson._id;
-    await order.populate('assignedDeliveryPerson', 'name -_id')
+    await order.populate('assignedDeliveryPerson', 'first_name last_name -_id')
     await order.save();
 
     res.status(200).json({ "message": "Success", "statusCode":200,order });
+   
 });
 
 const deliverd = catchAsyncErr(async (req, res, next) => {

@@ -102,7 +102,7 @@ const removeFromCart = catchAsyncErr(async (req, res, next) => {
     path: 'cartItems.item',
     select: 'image name basePrice description _id'
 });
-  if (!result) return next(new AppErr(`Cart not found`, 404));
+
 
   calctotalPrice(result);
   await result.save();
@@ -113,7 +113,7 @@ const removeFromCart = catchAsyncErr(async (req, res, next) => {
 
 const updateQuantity = catchAsyncErr(async (req, res, next) => {
   let cartExist = await cartModel.findOne({ user: req.user._id });
-  if (!cartExist) return next(new AppErr(`Cart not found`, 404));
+  
 
   let item = cartExist.cartItems.find(elm => elm._id.toString() === req.params.id);
   if (!item) return next(new AppErr(`Item not found in cart`, 404));
@@ -145,7 +145,7 @@ const getLoggedUserCart = catchAsyncErr(async (req, res, next) => {
     path: 'cartItems.item',
     select: 'image name basePrice description _id'
 });
-  if (!cart) return next(new AppErr(`Cart not found`, 404));
+ 
 
   res.status(200).json({ "message": "success", "statusCode": 200, cart });
 });
