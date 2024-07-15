@@ -45,7 +45,7 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 
 const getSpecificorders = catchAsyncErr(async (req, res, next) => {
 
-    let order = await orderModel.find({ user: req.user._id }).select('-cartItems -shippingAddress')
+    let order = await orderModel.find({ user: req.user._id }).select('-cartItems -shippingAddress -user  -tableNumber ')
     if (!order) return next(new AppErr('order not found', 404))
     res.status(200).json({ "message": " success","statusCode":200, order })
 
