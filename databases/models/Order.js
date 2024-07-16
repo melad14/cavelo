@@ -66,6 +66,10 @@ const orderSchema = mongoose.Schema({
     type: Boolean,
     default: false
   },
+  cancel: {
+    type: Boolean,
+    default: false
+  },
   assignedDeliveryPerson: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'

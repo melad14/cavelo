@@ -111,17 +111,25 @@ const completeDelivry = catchAsyncErr(async (req, res, next) => {
 const deliverd = catchAsyncErr(async (req, res, next) => {
 
     const { id } = req.params
-    let order = await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
-    await order.populate('assignedDeliveryPerson', 'first_name last_name -_id')
-    res.status(200).json({ "message": " success","statusCode":200, order })
+   await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
+
+    res.status(200).json({ "message": " success","statusCode":200 })
 
 })
 const paid = catchAsyncErr(async (req, res, next) => {
 
     const { id } = req.params
-    let order = await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
-    await order.populate('assignedDeliveryPerson', 'first_name last_name -_id')
-    res.status(200).json({ "message": " success","statusCode":200, order })
+   await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
+   
+    res.status(200).json({ "message": " success","statusCode":200 })
+
+})
+
+const cancel = catchAsyncErr(async (req, res, next) => {
+
+    const { id } = req.params
+    await orderModel.findByIdAndUpdate(id, { cancel: true}, { new: true })
+    res.status(200).json({ "message": " success","statusCode":200 })
 
 })
 
@@ -154,7 +162,7 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
 
 
 export {
-    ctreateCashOrder,
+    ctreateCashOrder,cancel,
     getSpecificorders,
     getAllorders, completeDelivry, completeInDoor,
     paid, deliverd, AdminGetOrder,userGetOrder,userGetOrderHistory
