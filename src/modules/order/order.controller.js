@@ -57,18 +57,21 @@ const AdminGetOrder = catchAsyncErr(async (req, res, next) => {
     let order = await orderModel.findById(id).populate({
         path: 'cartItems.item',
         select: 'image name basePrice description _id'
-    }).populate('assignedDeliveryPerson', 'name -_id')
+    }).populate('assignedDeliveryPerson', 'first_name last_name -_id')
     if (!order) return next(new AppErr('order not found', 404))
     res.status(200).json({ "message": " success","statusCode":200, order })
 
 })
+
 const userGetOrder = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params
-    let order = await orderModel.findById(id).populate({
+    let order = await orderModel.findById(id)
+    .populate({
         path: 'cartItems.item',
         select: 'image name basePrice description _id'
-    }).populate('assignedDeliveryPerson', 'name -_id')
-    if (!order) return next(new AppErr('order not found', 404))
+    })
+    .populate('assignedDeliveryPerson','first_name last_name -_id')
+   
     res.status(200).json({ "message": " success","statusCode":200, order })
 
 })
@@ -109,7 +112,7 @@ const deliverd = catchAsyncErr(async (req, res, next) => {
 
     const { id } = req.params
     let order = await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
-    await order.populate('assignedDeliveryPerson', 'name -_id')
+    await order.populate('assignedDeliveryPerson', 'first_name last_name -_id')
     res.status(200).json({ "message": " success","statusCode":200, order })
 
 })
@@ -117,7 +120,7 @@ const paid = catchAsyncErr(async (req, res, next) => {
 
     const { id } = req.params
     let order = await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
-    await order.populate('assignedDeliveryPerson', 'name -_id')
+    await order.populate('assignedDeliveryPerson', 'first_name last_name -_id')
     res.status(200).json({ "message": " success","statusCode":200, order })
 
 })

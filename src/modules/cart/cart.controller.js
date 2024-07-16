@@ -141,7 +141,7 @@ const applyCoupon = catchAsyncErr(async (req, res, next) => {
 
 
 const getLoggedUserCart = catchAsyncErr(async (req, res, next) => {
-  let cart = await cartModel.findOne({ user: req.user._id }).populate({
+  let cart = await cartModel.find({ user: req.user._id }).populate({
     path: 'cartItems.item',
     select: 'image name basePrice description _id'
 });
