@@ -1,10 +1,18 @@
 import { cartModel } from "../../../databases/models/cart.js"
-import { userModel } from "../../../databases/models/users.js";
 import { AppErr } from "../../utils/AppErr.js";
 import { catchAsyncErr } from "../../utils/catcherr.js"
 import { orderModel } from './../../../databases/models/Order.js';
 import { notificationModel } from './../../../databases/models/notifcation.js';
 import Pusher from 'pusher';
+import { dirname } from 'path';
+import pdf from "pdf-creator-node";
+import { readFileSync } from "fs";
+import path from "path";
+import { options } from "../../utils/option.js";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const pusher = new Pusher({
     appId: "1832769",
@@ -14,39 +22,71 @@ const pusher = new Pusher({
     useTLS: true
   });
 
-const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
-
-    const cart = await cartModel.findById(req.params.id)
-    if (!cart) return next(new AppErr('cart not found', 200))
-    req.body.user = req.user._id
-    req.body.cartItems = cart.cartItems
-    req.body.totalOrderPrice = cart.totalPriceAfterDiscount
-    const order = new orderModel(req.body)
-    await order.save()
-
-    if (order) {
-
-        await cartModel.findOneAndDelete({ user: req.user._id })
-        pusher.trigger('cavelo', 'newOrder', order);
   
+  export const createPdf = async (orderId) => {
+    try {
+        const order = await orderModel.findById(orderId).populate('cartItems.item');
+     
+        const items = order.cartItems.map(item => ({
+            name: item.item.name,
+            quantity: item.quantity, // Ensure quantity is included
+            basePrice: item.item.basePrice
+        }));
+        const html = readFileSync(path.resolve(__dirname, "../../templates/pdf.html"), "utf8");
+        const filename = `invoice_${order._id}.pdf`;
+        const document = {
+            html: html,
+            data: {
+                cartItems:items,
+                totalOrderPrice: order.totalOrderPrice
+            },
+            path:path.resolve(__dirname, "../../docs/", filename),
+            type: "",
+        };
+
+        await pdf.create(document, options);
+        return document.path;
+    } catch (error) {
+        console.log(error);
+        throw new AppErr('PDF creation failed', 500);
+    }
+};
+
+const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
+    const cart = await cartModel.findById(req.params.id);
+    if (!cart) return next(new AppErr('cart not found', 404));
+    
+    req.body.user = req.user._id;
+    req.body.cartItems = cart.cartItems;
+    req.body.totalOrderPrice = cart.totalPriceAfterDiscount;
+    
+    const order = new orderModel(req.body);
+    await order.save();
+    
+    if (order) {
+        await cartModel.findOneAndDelete({ user: req.user._id });
+        pusher.trigger('cavelo', 'newOrder', order);
+        
         const notification = new notificationModel({
             title: "New order Assigned",
             message: `You have been assigned a new order. Order ID: ${order._id}`,
             notid: req.user.first_name
-          });
-          await notification.save();
+        });
+        await notification.save();
         
-         
-        return res.status(200).json({ "message": " success","statusCode":200, order })
+        // Generate PDF Invoice
+        const pdfPath = await createPdf(order._id);
+        
+          res.status(200).json({ "message": "success", "statusCode": 200, order, pdfPath });
     } else {
-        return next(new AppErr('order not found', 404))
+        return next(new AppErr('order not created', 400));
     }
-})
+});
+
 
 const getSpecificorders = catchAsyncErr(async (req, res, next) => {
-
+    
     let orders = await orderModel.find({ user: req.user._id })
-    .sort({ cancel: 1, createdAt: -1 })
     .select('-cartItems -shippingAddress -user -tableNumber');
 
     res.status(200).json({ "message": " success","statusCode":200, orders })
@@ -77,6 +117,7 @@ const userGetOrder = catchAsyncErr(async (req, res, next) => {
     res.status(200).json({ "message": " success","statusCode":200, order })
 
 })
+
 const getAllorders = catchAsyncErr(async (req, res, next) => {
 
     let orders = await orderModel.find().select('-cartItems -shippingAddress')
