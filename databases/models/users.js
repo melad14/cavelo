@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ['male', 'female'],
+    default:""
   },
   otp: {
     type: String,
