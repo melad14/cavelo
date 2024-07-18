@@ -15,6 +15,10 @@ const userSchema = mongoose.Schema({
     type: String,
     default:""
   },
+  dateOfBirth: {
+    type: String,
+    default:""
+  },
   otp: {
     type: String,
   },
