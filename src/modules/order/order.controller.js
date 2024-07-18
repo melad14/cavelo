@@ -4,15 +4,7 @@ import { catchAsyncErr } from "../../utils/catcherr.js"
 import { orderModel } from './../../../databases/models/Order.js';
 import { notificationModel } from './../../../databases/models/notifcation.js';
 import Pusher from 'pusher';
-import { dirname } from 'path';
-import pdf from "pdf-creator-node";
-import { readFileSync } from "fs";
-import path from "path";
-import { options } from "../../utils/option.js";
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const pusher = new Pusher({
     appId: "1832769",
@@ -23,34 +15,6 @@ const pusher = new Pusher({
   });
 
   
-  export const createPdf = async (orderId) => {
-    try {
-        const order = await orderModel.findById(orderId).populate('cartItems.item');
-     
-        const items = order.cartItems.map(item => ({
-            name: item.item.name,
-            quantity: item.quantity, // Ensure quantity is included
-            basePrice: item.item.basePrice
-        }));
-        const html = readFileSync(path.resolve(__dirname, "../../templates/pdf.html"), "utf8");
-        const filename = `invoice_${order._id}.pdf`;
-        const document = {
-            html: html,
-            data: {
-                cartItems:items,
-                totalOrderPrice: order.totalOrderPrice
-            },
-            path:path.resolve(__dirname, "../../docs/", filename),
-            type: "",
-        };
-
-        await pdf.create(document, options);
-        return document.path;
-    } catch (error) {
-        console.log(error);
-        throw new AppErr('PDF creation failed', 500);
-    }
-};
 
 const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
     const cart = await cartModel.findById(req.params.id);
@@ -74,10 +38,9 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
         });
         await notification.save();
         
-        // Generate PDF Invoice
-        const pdfPath = await createPdf(order._id);
+    
         
-          res.status(200).json({ "message": "success", "statusCode": 200, order, pdfPath });
+          res.status(200).json({ "message": "success", "statusCode": 200, order });
     } else {
         return next(new AppErr('order not created', 400));
     }

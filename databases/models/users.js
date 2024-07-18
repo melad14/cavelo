@@ -10,9 +10,11 @@ const userSchema = mongoose.Schema({
   email: {
     type: String,
     unique: true,
- 
   },
- 
+  gender: {
+    type: String,
+    enum: ['male', 'female'],
+  },
   otp: {
     type: String,
   },

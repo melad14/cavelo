@@ -8,7 +8,7 @@ export const createItem = catchAsyncErr(async (req, res, next) => {
   if (req.files) {
     req.body.image = req.files['image']?.[0]?.path
   }
-  // Parse the sizes and extraIngredientPrices fields from JSON strings
+
   if (req.body.sizes) {
     try {
       req.body.sizes = JSON.parse(req.body.sizes);

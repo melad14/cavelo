@@ -49,6 +49,7 @@ const orderSchema = mongoose.Schema({
     default: 'cash'
   },
 
+
   isPaid: {
     type: Boolean,
     default: false
@@ -63,6 +64,10 @@ const orderSchema = mongoose.Schema({
 
 
   iscomplete: {
+    type: Boolean,
+    default: false
+  },
+  spicy: {
     type: Boolean,
     default: false
   },
