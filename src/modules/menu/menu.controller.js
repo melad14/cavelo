@@ -13,9 +13,8 @@ export const createItem = catchAsyncErr(async (req, res, next) => {
     try {
       req.body.sizes = JSON.parse(req.body.sizes);
     } catch (error) {
-      return next(new AppErr('Invalid JSON format for sizes', 400));
-    }
-  }
+      return next(new AppErr('Invalid format for sizes', 400));
+    }}
 
   if (req.body.extraIngredientPrices) {
     try {
@@ -33,7 +32,6 @@ export const createItem = catchAsyncErr(async (req, res, next) => {
 
 export const editItem = catchAsyncErr(async (req, res, next) => {
   const { id } = req.params
-
   if (req.files['image']?.[0]?.path) {
     req.body.image = req.files['image']?.[0]?.path
   }
@@ -50,11 +48,11 @@ export const getAllMenu = catchAsyncErr(async (req, res, next) => {
   res.status(200).json({ "message": "success", "statusCode": 200, result })
 })
 
+
 export const getAllMenuByCat = catchAsyncErr(async (req, res, next) => {
 
   const { category } = req.body
   const products = await menuModel.find({category}).select('image name basePrice description _id');
- 
   res.status(200).json({ "message": "success", "statusCode": 200, products })
 })
 

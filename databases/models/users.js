@@ -11,17 +11,21 @@ const userSchema = mongoose.Schema({
     type: String,
     unique: true,
   },
+  
   gender: {
     type: String,
     default:""
   },
+
   dateOfBirth: {
     type: String,
     default:""
   },
+
   otp: {
     type: String,
   },
+
   otpExpires: {
     type: Date,
   },

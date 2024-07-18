@@ -30,6 +30,7 @@ const orderSchema = mongoose.Schema({
 
   shippingAddress: {
     street: String,
+    location:String,
     city: String,
     phone: String,
     secondPhone: String,
