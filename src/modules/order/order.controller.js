@@ -89,7 +89,7 @@ const getAllorders = catchAsyncErr(async (req, res, next) => {
 
 })
 
-const completeInDoor = catchAsyncErr(async (req, res, next) => {
+const complete = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params;
 
     let order = await orderModel.findByIdAndUpdate(id, { iscomplete: true }, { new: true });
@@ -99,20 +99,13 @@ const completeInDoor = catchAsyncErr(async (req, res, next) => {
     res.status(200).json({ "message": "Success","statusCode":200, order });
 });
 
-const completeDelivry = catchAsyncErr(async (req, res, next) => {
-    const { id } = req.params;
-    const { deliveryPerson } = req.body;
+const getAllordersIncomes = catchAsyncErr(async (req, res, next) => {
 
-    let order = await orderModel.findByIdAndUpdate(id, { iscomplete: true , assignedDeliveryPerson:deliveryPerson }, { new: true });
+    let orders = await orderModel.find({isPaid:true}).select('paymentmethod totalOrderPrice _id')
+    if (!orders) return next(new AppErr('orders not found', 404))
+    res.status(200).json({ "message": " success","statusCode":200, orders })
 
-    if (!order) return next(new AppErr('Order not found', 404));
-
-    await order.populate('assignedDeliveryPerson', 'first_name last_name -_id')
-    await order.save();
-
-    res.status(200).json({ "message": "Success", "statusCode":200,order });
-   
-});
+})
 
 const deliverd = catchAsyncErr(async (req, res, next) => {
 
@@ -169,8 +162,8 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
 
 export {
     ctreateCashOrder,cancel,
-    getSpecificorders,
-    getAllorders, completeDelivry, completeInDoor,
+    getSpecificorders,getAllordersIncomes,
+    getAllorders, complete,
     paid, deliverd, AdminGetOrder,userGetOrder,userGetOrderHistory
 
 

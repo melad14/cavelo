@@ -47,7 +47,7 @@ const userSchema = mongoose.Schema({
 adresses: [{
     city: String,
     street: String,
-    phone: String
+    flat: String
 }],
   code: {  
     type:Number,
