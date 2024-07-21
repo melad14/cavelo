@@ -45,9 +45,10 @@ const userSchema = mongoose.Schema({
     default:''
   },
 adresses: [{
-    city: String,
-    street: String,
-    flat: String
+  street: String,
+  city: String,
+  phone: String,
+  secondPhone: String,
 }],
   code: {  
     type:Number,
