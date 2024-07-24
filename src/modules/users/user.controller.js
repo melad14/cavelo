@@ -10,32 +10,34 @@ const generateOTP = () => {
 };
 
 const signin = catchAsyncErr(async (req, res, next) => {
-    
     const { phone } = req.body;
     let user = await userModel.findOne({ phone });
-
-    if (!user) {
-        const user = new userModel({ phone })
-        await user.save()
-
-        const otp = generateOTP();
-        const otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
-     const result=  await userModel.findOneAndUpdate({ phone }, { otp, otpExpires,code:0 },{new:true});
-        await sendSMSTest(phone, `Your OTP is ${otp}`);
-    
-        res.status(200).json({ "message": "user created and OTP sent","statusCode":200 });
+  
+    if (user && user.blocked) {
+      return next(new AppErr("User is blocked", 403));
     }
-else{
-    const otp = generateOTP();
-    const otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
-    const result= await userModel.findOneAndUpdate({ phone }, { otp, otpExpires },{new:true});
-
-    await sendSMSTest(phone, `Your OTP is ${otp}`);
-
-    res.status(200).json({ "message": "OTP sent","statusCode":200,  });
-}
-   
-});
+  
+    if (!user) {
+      const user = new userModel({ phone })
+      await user.save();
+  
+      const otp = generateOTP();
+      const otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
+      await userModel.findOneAndUpdate({ phone }, { otp, otpExpires, code: 0 }, { new: true });
+      await sendSMSTest(phone, `Your OTP is ${otp}`);
+  
+      res.status(200).json({ "message": "User created and OTP sent", "statusCode": 200 });
+    } else {
+      const otp = generateOTP();
+      const otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
+      await userModel.findOneAndUpdate({ phone }, { otp, otpExpires }, { new: true });
+  
+      await sendSMSTest(phone, `Your OTP is ${otp}`);
+  
+      res.status(200).json({ "message": "OTP sent", "statusCode": 200 });
+    }
+  });
+  
 
 const verifyOTP = catchAsyncErr(async (req, res, next) => {
     const { phone, otp } = req.body;

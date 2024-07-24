@@ -54,7 +54,7 @@ export const verifyOTP = catchAsyncErr(async (req, res, next) => {
 
 export const getUsers = catchAsyncErr(async (req, res, next) => {
 
-    const users = await userModel.find()
+    const users = await userModel.find({role:"user"})
 
     res.status(200).json({ "message": "success","statusCode":200, users });
 
@@ -74,3 +74,14 @@ export const editUserRole = catchAsyncErr(async (req, res, next) => {
     res.status(200).json({ "message": "success","statusCode":200, user });
 
 });
+
+export const blockUser = catchAsyncErr(async (req, res, next) => {
+    const { id } = req.params;
+    const user = await userModel.findById(id);
+  
+    user.blocked = true;
+    await user.save();
+  
+    res.status(200).json({ "message": "User blocked", "statusCode": 200 });
+  });
+  

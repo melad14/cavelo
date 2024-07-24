@@ -34,7 +34,10 @@ const userSchema = mongoose.Schema({
     enum: ["user", "admin","delivery"],
     default: 'user'
   },
- 
+  blocked: {
+    type: Boolean,
+    default: false
+  },
   phone: {
     type: String,
     require:true,

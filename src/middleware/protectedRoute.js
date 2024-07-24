@@ -15,8 +15,9 @@ export const protectedRoutes = catchAsyncErr(async (req, res, next) => {
      let decoded =  jwt.verify(token,`${process.env.TOKEN_SK}`)
  
     let user = await userModel.findById(decoded.user._id)
-    if (!user) return next(new AppErr('invalid token ', 400))
-
+    if (!user || user.blocked) {
+        return next(new AppErr("invalid token or user is blocked", 401));
+    }
     req.user = user
     next()
 })

@@ -12,8 +12,7 @@ export const addAdress = catchAsyncErr(async (req, res, next) => {
 })
 
 export const updateAddress = catchAsyncErr(async (req, res, next) => {
-    const { id } = req.params;
-    
+    const { id } = req.params; 
     const user = await userModel.findOneAndUpdate({ _id: req.user._id, "adresses._id": id },
          {
             $set: {
