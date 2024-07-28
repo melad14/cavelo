@@ -32,7 +32,7 @@ const addTocart = catchAsyncErr(async (req, res, next) => {
     if (selectedSize) {
        
       req.body.size = selectedSize;
-      req.body.basePrice += selectedSize.price;
+      req.body.basePrice = selectedSize.price;
     } else {
       return next(new AppErr(`Selected size not found`, 400));
     }
