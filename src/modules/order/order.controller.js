@@ -88,6 +88,42 @@ const getAllorders = catchAsyncErr(async (req, res, next) => {
     res.status(200).json({ "message": " success","statusCode":200, orders })
 
 })
+export const getTodayorders = catchAsyncErr(async (req, res, next) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+  
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+  
+    // Find orders created today
+    const orders = await orderModel.find({
+      createdAt: {
+        $gte: today,
+        $lt: tomorrow
+      }
+    }).select('-cartItems -shippingAddress');
+    if (!orders) return next(new AppErr('No orders found for today', 404))
+    res.status(200).json({ "message": " success","statusCode":200, orders })
+
+})
+// export const getOrdersByDay = catchAsyncErr(async (req, res, next) => {
+//     const today = new Date();
+//     today.setHours(0, 0, 0, 0);
+  
+//     const tomorrow = new Date(today);
+//     tomorrow.setDate(today.getDate() + 1);
+  
+//     // Find orders created today
+//     const orders = await orderModel.find({
+//       createdAt: {
+//         $gte: today,
+//         $lt: tomorrow
+//       }
+//     }).select('-cartItems -shippingAddress');
+//     if (!orders) return next(new AppErr('No orders found for today', 404))
+//     res.status(200).json({ "message": " success","statusCode":200, orders })
+
+// })
 
 const complete = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params;
