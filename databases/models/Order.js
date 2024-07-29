@@ -62,22 +62,13 @@ const orderSchema = mongoose.Schema({
   },
   deliveredAt: Date,
 
-
   iscomplete: {
-    type: Boolean,
-    default: false
-  },
-  spicy: {
     type: Boolean,
     default: false
   },
   cancel: {
     type: Boolean,
     default: false
-  },
-  assignedDeliveryPerson: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user'
   },
   details: {
     type: String,
