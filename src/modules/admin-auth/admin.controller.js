@@ -85,3 +85,13 @@ export const blockUser = catchAsyncErr(async (req, res, next) => {
     res.status(200).json({ "message": "User blocked", "statusCode": 200 });
   });
   
+export const unblockUser = catchAsyncErr(async (req, res, next) => {
+    const { id } = req.params;
+    const user = await userModel.findById(id);
+  
+    user.blocked = false;
+    await user.save();
+  
+    res.status(200).json({ "message": "User blocked", "statusCode": 200 });
+  });
+  
