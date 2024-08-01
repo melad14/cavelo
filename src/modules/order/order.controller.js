@@ -62,7 +62,7 @@ const AdminGetOrder = catchAsyncErr(async (req, res, next) => {
     let order = await orderModel.findById(id).populate({
         path: 'cartItems.item',
         select: 'image name basePrice description _id'
-    }).populate('assignedDeliveryPerson', 'first_name last_name -_id')
+    })
     if (!order) return next(new AppErr('order not found', 404))
     res.status(200).json({ "message": " success","statusCode":200, order })
 
@@ -75,7 +75,7 @@ const userGetOrder = catchAsyncErr(async (req, res, next) => {
         path: 'cartItems.item',
         select: 'image name basePrice description _id'
     })
-    .populate('assignedDeliveryPerson','first_name last_name -_id')
+ 
    
     res.status(200).json({ "message": " success","statusCode":200, order })
 
