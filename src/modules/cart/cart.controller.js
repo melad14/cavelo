@@ -10,7 +10,7 @@ function calctotalPrice(cart) {
     totalPrice += elm.quantity * elm.basePrice;
   });
   cart.totalPrice = totalPrice;
-  if (cart.discount) {
+  if (cart.discount!==0) {
     cart.totalPriceAfterDiscount = cart.totalPrice - (cart.totalPrice * cart.discount) / 100;
   } else {
     cart.totalPriceAfterDiscount = cart.totalPrice;
