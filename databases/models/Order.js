@@ -72,7 +72,10 @@ const orderSchema = mongoose.Schema({
   },
   details: {
     type: String,
-  }
+  },
+  discount: {
+    type: Number,
+   },
 
 }, { timestamps: true })
 

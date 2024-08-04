@@ -23,6 +23,7 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
     req.body.user = req.user._id;
     req.body.cartItems = cart.cartItems;
     req.body.totalOrderPrice = cart.totalPriceAfterDiscount;
+    req.body.discount = cart.discount;
     
     const order = new orderModel(req.body);
     await order.save();
