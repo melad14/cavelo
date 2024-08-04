@@ -32,7 +32,7 @@ const cartSchema = mongoose.Schema({
 
     discount: {
      type: Number,
-     default:0
+     default:1
     },
 
     terms: {
