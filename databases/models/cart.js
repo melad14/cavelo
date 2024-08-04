@@ -30,7 +30,10 @@ const cartSchema = mongoose.Schema({
 
     totalPriceAfterDiscount: Number,
 
-    discount: Number,
+    discount: {
+     type: Number,
+     default:0
+    },
 
     terms: {
         type: [String],
