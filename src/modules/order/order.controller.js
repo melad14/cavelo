@@ -157,9 +157,60 @@ const complete = catchAsyncErr(async (req, res, next) => {
 
 const getAllordersIncomes = catchAsyncErr(async (req, res, next) => {
 
-    let orders = await orderModel.find({isPaid:true}).select('paymentmethod totalOrderPrice createdAt _id')
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+  
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+  
+    // Find orders created today
+    const orders = await orderModel.find({
+      createdAt: {
+        $gte: today,
+        $lt: tomorrow
+      },
+      paid:true
+    }).select('paymentmethod totalOrderPrice createdAt _id')
     if (!orders) return next(new AppErr('orders not found', 404))
     res.status(200).json({ "message": " success","statusCode":200, orders })
+
+})
+export const getIncomesByDay = catchAsyncErr(async (req, res, next) => {
+    const { date } = req.body;
+
+  if (!date) {
+    return next(new AppErr('Date is required', 400));
+  }
+
+  // Parse the date in the format DD-MM-YYYY
+  const [day, month, year] = date.split('-');
+  const specificDate = new Date(year, month - 1, day); // month is 0-indexed in JavaScript Date
+
+  if (isNaN(specificDate.getTime())) {
+    return next(new AppErr('Invalid date format', 400));
+  }
+
+  // Set the start and end of the specific day
+  specificDate.setHours(0, 0, 0, 0);
+  const nextDay = new Date(specificDate);
+  nextDay.setDate(specificDate.getDate() + 1);
+
+  // Find orders created on the specific day
+  const orders = await orderModel.find({
+    createdAt: {
+      $gte: specificDate,
+      $lt: nextDay
+    },
+    paid:true
+  }).select(('paymentmethod totalOrderPrice createdAt _id'));
+
+  if (!orders.length) return next(new AppErr('No orders found for the specified day', 404));
+
+  res.status(200).json({
+    message: "Success",
+    statusCode: 200,
+    orders
+  });
 
 })
 
@@ -171,6 +222,7 @@ const deliverd = catchAsyncErr(async (req, res, next) => {
     res.status(200).json({ "message": " success","statusCode":200 })
 
 })
+
 const paid = catchAsyncErr(async (req, res, next) => {
 
     const { id } = req.params
@@ -187,8 +239,6 @@ const cancel = catchAsyncErr(async (req, res, next) => {
     res.status(200).json({ "message": " success","statusCode":200 })
 
 })
-
-
 
 const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
     const userId = req.user._id;
