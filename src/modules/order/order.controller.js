@@ -157,7 +157,7 @@ const complete = catchAsyncErr(async (req, res, next) => {
 
 const getAllordersIncomes = catchAsyncErr(async (req, res, next) => {
 
-    let orders = await orderModel.find({isPaid:true}).select('paymentmethod totalOrderPrice  _id')
+    let orders = await orderModel.find({isPaid:true}).select('paymentmethod totalOrderPrice createdAt _id')
     if (!orders) return next(new AppErr('orders not found', 404))
     res.status(200).json({ "message": " success","statusCode":200, orders })
 
