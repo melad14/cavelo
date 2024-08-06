@@ -1,5 +1,5 @@
 import express from 'express'
-import {  blockUser, create_account, editUserRole, getUsers, signIn_admin, specificUser, unblockUser, verifyOTP } from './admin.controller.js';
+import {  blockList, blockUser, create_account, editUserRole, getUsers, signIn_admin, specificUser, unblockUser, verifyOTP } from './admin.controller.js';
 import { protectedRoutes, allowTo } from '../../middleware/protectedRoute.js';
 import { signInSchema, verifySchema } from './admin.validiation.js';
 import { validation } from '../../middleware/validation.js';
@@ -14,7 +14,7 @@ adminRouter.get('/get-user/:id', protectedRoutes, allowTo('admin'), specificUser
 adminRouter.put('/edit-user-role/:id', protectedRoutes, allowTo('admin'), editUserRole);
 
 adminRouter.put('/block-user/:id', protectedRoutes, allowTo('admin'), blockUser);
-
+adminRouter.get('/block-list', protectedRoutes, allowTo('admin'), blockList);
 adminRouter.put('/unblock-user/:id', protectedRoutes, allowTo('admin'), unblockUser);
 
 
