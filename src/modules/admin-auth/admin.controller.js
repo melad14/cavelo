@@ -29,14 +29,11 @@ export const signIn_admin = catchAsyncErr(async (req, res, next) => {
      const otp = generateOTP();
      const otpExpires = new Date(Date.now() + 10 * 60000);
      await userModel.findOneAndUpdate({ phone }, { otp, otpExpires }, { new: true });
-
      await sendSMSTest(phone, `Your OTP is ${otp}`);
-
      res.status(200).json({ "message": "OTP sent", "statusCode": 200, });
 
 
 });
-
 
 export const verifyOTP = catchAsyncErr(async (req, res, next) => {
     const { phone, otp } = req.body;
@@ -55,14 +52,12 @@ export const verifyOTP = catchAsyncErr(async (req, res, next) => {
 export const getUsers = catchAsyncErr(async (req, res, next) => {
 
     const users = await userModel.find({role:"user" , blocked:false})
-
     res.status(200).json({ "message": "success","statusCode":200, users });
 
 });
+
 export const blockList = catchAsyncErr(async (req, res, next) => {
-
     const users = await userModel.find({role:"user" , blocked:true})
-
     res.status(200).json({ "message": "success","statusCode":200, users });
 
 });
@@ -91,7 +86,7 @@ export const blockUser = catchAsyncErr(async (req, res, next) => {
     await user.save();
   
     res.status(200).json({ "message": "User blocked", "statusCode": 200 });
-  });
+});
   
 export const unblockUser = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params;
@@ -101,5 +96,5 @@ export const unblockUser = catchAsyncErr(async (req, res, next) => {
     await user.save();
   
     res.status(200).json({ "message": "User blocked", "statusCode": 200 });
-  });
+});
   
