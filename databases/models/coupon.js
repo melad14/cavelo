@@ -4,7 +4,7 @@ const coponSchema=mongoose.Schema({
     code: {
         type: String,
         required: true,
-    },
+        unique: true    },
     discount: {
         type: Number,
         required: [true,'coupon discount is required'],
