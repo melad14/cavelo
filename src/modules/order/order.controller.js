@@ -7,108 +7,108 @@ import Pusher from 'pusher';
 
 
 const pusher = new Pusher({
-    appId: "1832769",
-    key: "74fa23b5f9fdd3fa37f0",
-    secret: "c59f35157bcebbfb400a",
-    cluster: "eu",
-    useTLS: true
-  });
+  appId: "1832769",
+  key: "74fa23b5f9fdd3fa37f0",
+  secret: "c59f35157bcebbfb400a",
+  cluster: "eu",
+  useTLS: true
+});
 
-  
+
 
 const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
-    const cart = await cartModel.findById(req.params.id);
-    if (!cart) return next(new AppErr('cart not found', 404));
-    
-    req.body.user = req.user._id;
-    req.body.cartItems = cart.cartItems;
-    req.body.totalOrderPrice = cart.totalPriceAfterDiscount;
-    req.body.discount = cart.discount;
-    
-    const order = new orderModel(req.body);
-    await order.save();
-    
-    if (order) {
-        await cartModel.findOneAndDelete({ user: req.user._id });
-        pusher.trigger('cavelo', 'newOrder', order);
-        
-        const notification = new notificationModel({
-            title: "New order Assigned",
-            message: `You have been assigned a new order. Order ID: ${order._id}`,
-            notid: req.user.first_name
-        });
-        await notification.save();
-        
-    
-        
-          res.status(200).json({ "message": "success", "statusCode": 200, order });
-    } else {
-        return next(new AppErr('order not created', 400));
-    }
+  const cart = await cartModel.findById(req.params.id);
+  if (!cart) return next(new AppErr('cart not found', 404));
+
+  req.body.user = req.user._id;
+  req.body.cartItems = cart.cartItems;
+  req.body.totalOrderPrice = cart.totalPriceAfterDiscount;
+  req.body.discount = cart.discount;
+
+  const order = new orderModel(req.body);
+  await order.save();
+
+  if (order) {
+    await cartModel.findOneAndDelete({ user: req.user._id });
+    pusher.trigger('cavelo', 'newOrder', order);
+
+    const notification = new notificationModel({
+      title: "New order Assigned",
+      message: `You have been assigned a new order. Order ID: ${order._id}`,
+      notid: req.user.first_name
+    });
+    await notification.save();
+
+
+
+    res.status(200).json({ "message": "success", "statusCode": 200, order });
+  } else {
+    return next(new AppErr('order not created', 400));
+  }
 });
 
 
 const getSpecificorders = catchAsyncErr(async (req, res, next) => {
-    
-    let orders = await orderModel.find({ user: req.user._id })
+
+  let orders = await orderModel.find({ user: req.user._id })
     .select('-cartItems -shippingAddress -user -tableNumber');
 
-    res.status(200).json({ "message": " success","statusCode":200, orders })
+  res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
 })
 
 
 const AdminGetOrder = catchAsyncErr(async (req, res, next) => {
-    const { id } = req.params
-    let order = await orderModel.findById(id).populate({
-        path: 'cartItems.item',
-        select: 'image name basePrice description _id'
-    })
-    if (!order) return next(new AppErr('order not found', 404))
-    res.status(200).json({ "message": " success","statusCode":200, order })
+  const { id } = req.params
+  let order = await orderModel.findById(id).populate({
+    path: 'cartItems.item',
+    select: 'image name basePrice description _id'
+  })
+  if (!order) return next(new AppErr('order not found', 404))
+  res.status(200).json({ "message": " success", "statusCode": 200, order })
 
 })
 
 const userGetOrder = catchAsyncErr(async (req, res, next) => {
-    const { id } = req.params
-    let order = await orderModel.findById(id)
+  const { id } = req.params
+  let order = await orderModel.findById(id)
     .populate({
-        path: 'cartItems.item',
-        select: 'image name basePrice description _id'
+      path: 'cartItems.item',
+      select: 'image name basePrice description _id'
     })
- 
-   
-    res.status(200).json({ "message": " success","statusCode":200, order })
+
+
+  res.status(200).json({ "message": " success", "statusCode": 200, order })
 
 })
 
 const getAllorders = catchAsyncErr(async (req, res, next) => {
 
-    let orders = await orderModel.find().select('-cartItems -shippingAddress')
-    if (!orders) return next(new AppErr('orders not found', 404))
-    res.status(200).json({ "message": " success","statusCode":200, orders })
+  let orders = await orderModel.find().select('-cartItems -shippingAddress')
+  if (!orders) return next(new AppErr('orders not found', 404))
+  res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
 })
 export const getTodayorders = catchAsyncErr(async (req, res, next) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-  
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-  
-    // Find orders created today
-    const orders = await orderModel.find({
-      createdAt: {
-        $gte: today,
-        $lt: tomorrow
-      }
-    }).select('-cartItems -shippingAddress');
-    if (!orders) return next(new AppErr('No orders found for today', 404))
-    res.status(200).json({ "message": " success","statusCode":200, orders })
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  // Find orders created today
+  const orders = await orderModel.find({
+    createdAt: {
+      $gte: today,
+      $lt: tomorrow
+    }
+  }).select('-cartItems -shippingAddress');
+  if (!orders) return next(new AppErr('No orders found for today', 404))
+  res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
 })
 export const getOrdersByDay = catchAsyncErr(async (req, res, next) => {
-    const { date } = req.body;
+  const { date } = req.body;
 
   if (!date) {
     return next(new AppErr('Date is required', 400));
@@ -146,37 +146,37 @@ export const getOrdersByDay = catchAsyncErr(async (req, res, next) => {
 })
 
 const complete = catchAsyncErr(async (req, res, next) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    let order = await orderModel.findByIdAndUpdate(id, { iscomplete: true }, { new: true });
+  let order = await orderModel.findByIdAndUpdate(id, { iscomplete: true }, { new: true });
 
-    if (!order) return next(new AppErr('Order not found', 404));
+  if (!order) return next(new AppErr('Order not found', 404));
 
-    res.status(200).json({ "message": "Success","statusCode":200, order });
+  res.status(200).json({ "message": "Success", "statusCode": 200, order });
 });
 
 const getAllordersIncomes = catchAsyncErr(async (req, res, next) => {
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-  
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-  
-    // Find orders created today
-    const orders = await orderModel.find({
-      createdAt: {
-        $gte: today,
-        $lt: tomorrow
-      },
-      paid:true
-    }).select('paymentmethod totalOrderPrice createdAt _id')
-    if (!orders) return next(new AppErr('orders not found', 404))
-    res.status(200).json({ "message": " success","statusCode":200, orders })
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  // Find orders created today
+  const orders = await orderModel.find({
+    createdAt: {
+      $gte: today,
+      $lt: tomorrow
+    },
+    paid: true
+  }).select('paymentmethod totalOrderPrice createdAt _id')
+  if (!orders) return next(new AppErr('orders not found', 404))
+  res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
 })
 export const getIncomesByDay = catchAsyncErr(async (req, res, next) => {
-    const { date } = req.body;
+  const { date } = req.body;
 
   if (!date) {
     return next(new AppErr('Date is required', 400));
@@ -201,7 +201,7 @@ export const getIncomesByDay = catchAsyncErr(async (req, res, next) => {
       $gte: specificDate,
       $lt: nextDay
     },
-    paid:true
+    paid: true
   }).select(('paymentmethod totalOrderPrice createdAt _id'));
 
   if (!orders.length) return next(new AppErr('No orders found for the specified day', 404));
@@ -216,61 +216,61 @@ export const getIncomesByDay = catchAsyncErr(async (req, res, next) => {
 
 const deliverd = catchAsyncErr(async (req, res, next) => {
 
-    const { id } = req.params
-   await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
+  const { id } = req.params
+  await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
 
-    res.status(200).json({ "message": " success","statusCode":200 })
+  res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
 
 const paid = catchAsyncErr(async (req, res, next) => {
 
-    const { id } = req.params
-   await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
-   
-    res.status(200).json({ "message": " success","statusCode":200 })
+  const { id } = req.params
+  await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
+
+  res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
 
 const cancel = catchAsyncErr(async (req, res, next) => {
 
-    const { id } = req.params
-    await orderModel.findByIdAndUpdate(id, { cancel: true}, { new: true })
-    res.status(200).json({ "message": " success","statusCode":200 })
+  const { id } = req.params
+  await orderModel.findByIdAndUpdate(id, { cancel: true }, { new: true })
+  res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
 
 const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
-    const userId = req.user._id;
-    
-    const orders = await orderModel.find({ user: userId })
-        .populate({
-            path: 'cartItems.item',
-            select: 'image name basePrice description _id'
-        }) 
+  const userId = req.user._id;
 
-        const filteredItems = orders.flatMap(order => 
-            order.cartItems.map(cartItem => ({
-                
-                _id: cartItem.item._id,
-                image: cartItem.item.image,
-                name: cartItem.item.name,
-                description: cartItem.item.description,
-                basePrice: cartItem.item.basePrice,
-            }))
-        );
-   
-    
+  const orders = await orderModel.find({ user: userId })
+    .populate({
+      path: 'cartItems.item',
+      select: 'image name basePrice description _id'
+    })
 
-    res.status(200).json({   "message": "Success",   "statusCode": 200,orders:filteredItems});
+  const filteredItems = orders.flatMap(order =>
+    order.cartItems.map(cartItem => ({
+
+      _id: cartItem.item._id,
+      image: cartItem.item.image,
+      name: cartItem.item.name,
+      description: cartItem.item.description,
+      basePrice: cartItem.item.basePrice,
+    }))
+  );
+
+
+
+  res.status(200).json({ "message": "Success", "statusCode": 200, orders: filteredItems });
 });
 
 
 export {
-    ctreateCashOrder,cancel,
-    getSpecificorders,getAllordersIncomes,
-    getAllorders, complete,
-    paid, deliverd, AdminGetOrder,userGetOrder,userGetOrderHistory
+  ctreateCashOrder, cancel,
+  getSpecificorders, getAllordersIncomes,
+  getAllorders, complete,
+  paid, deliverd, AdminGetOrder, userGetOrder, userGetOrderHistory
 
 
 }
