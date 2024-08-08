@@ -75,7 +75,7 @@ export const getitem = catchAsyncErr(async (req, res, next) => {
   const { id } = req.params
   const result = await menuModel.findById(id)
 
-  res.status(200).json({ "message": "success", "statusCode": 200, result })
+  res.status(200).json({ "message": "success", "statusCode": 200, result }) 
 })
 
 

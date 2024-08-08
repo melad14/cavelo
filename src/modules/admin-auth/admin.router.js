@@ -14,7 +14,6 @@ adminRouter.get('/get-user/:id', protectedRoutes, allowTo('admin'), specificUser
 adminRouter.put('/edit-user-role/:id', protectedRoutes, allowTo('admin'), editUserRole);
 
 adminRouter.put('/block-user/:id', protectedRoutes, allowTo('admin'), blockUser);
-adminRouter.get('/block-list', protectedRoutes, allowTo('admin'), blockList);
 adminRouter.put('/unblock-user/:id', protectedRoutes, allowTo('admin'), unblockUser);
 
 

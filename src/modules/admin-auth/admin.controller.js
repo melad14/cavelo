@@ -51,16 +51,11 @@ export const verifyOTP = catchAsyncErr(async (req, res, next) => {
 
 export const getUsers = catchAsyncErr(async (req, res, next) => {
 
-    const users = await userModel.find({role:"user" , blocked:false})
+    const users = await userModel.find({role:"user" })
     res.status(200).json({ "message": "success","statusCode":200, users });
 
 });
 
-export const blockList = catchAsyncErr(async (req, res, next) => {
-    const users = await userModel.find({role:"user" , blocked:true})
-    res.status(200).json({ "message": "success","statusCode":200, users });
-
-});
 
 export const specificUser = catchAsyncErr(async (req, res, next) => {
     const { id } = req.params;
