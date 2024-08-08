@@ -1,5 +1,5 @@
 import express from 'express'
-import {  blockList, blockUser, create_account, editUserRole, getUsers, signIn_admin, specificUser, unblockUser, verifyOTP } from './admin.controller.js';
+import { blockUser, create_account, editUserRole, getUsers, signIn_admin, specificUser, unblockUser, verifyOTP } from './admin.controller.js';
 import { protectedRoutes, allowTo } from '../../middleware/protectedRoute.js';
 import { signInSchema, verifySchema } from './admin.validiation.js';
 import { validation } from '../../middleware/validation.js';
