@@ -15,7 +15,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'uploads',
+    folder: 'cavelo',
     format: async (req, file) => 'jpeg', 
     public_id: (req, file) => uuidv4() + "-" + file.originalname,
   },
