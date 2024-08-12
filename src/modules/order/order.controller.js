@@ -60,9 +60,14 @@ const getSpecificorders = catchAsyncErr(async (req, res, next) => {
 
 const AdminGetOrder = catchAsyncErr(async (req, res, next) => {
   const { id } = req.params
-  let order = await orderModel.findById(id).populate({
+  let order = await orderModel.findById(id)
+  .populate({
     path: 'cartItems.item',
     select: 'image name basePrice description _id'
+  })
+  .populate({
+    path: 'user',
+    select: 'first_name last_name phone _id'
   })
   if (!order) return next(new AppErr('order not found', 404))
   res.status(200).json({ "message": " success", "statusCode": 200, order })
@@ -89,6 +94,7 @@ const getAllorders = catchAsyncErr(async (req, res, next) => {
   res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
 })
+
 export const getTodayorders = catchAsyncErr(async (req, res, next) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
