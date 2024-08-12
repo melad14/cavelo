@@ -90,6 +90,10 @@ const userGetOrder = catchAsyncErr(async (req, res, next) => {
 const getAllorders = catchAsyncErr(async (req, res, next) => {
 
   let orders = await orderModel.find().select('-cartItems -shippingAddress')
+  .populate({
+    path: 'user',
+    select: 'first_name last_name phone _id'
+  })
   if (!orders) return next(new AppErr('orders not found', 404))
   res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
@@ -108,7 +112,11 @@ export const getTodayorders = catchAsyncErr(async (req, res, next) => {
       $gte: today,
       $lt: tomorrow
     }
-  }).select('-cartItems -shippingAddress');
+  }).select('-cartItems -shippingAddress')
+  .populate({
+    path: 'user',
+    select: 'first_name last_name phone _id'
+  })
   if (!orders) return next(new AppErr('No orders found for today', 404))
   res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
@@ -139,7 +147,11 @@ export const getOrdersByDay = catchAsyncErr(async (req, res, next) => {
       $gte: specificDate,
       $lt: nextDay
     }
-  }).select('-cartItems -shippingAddress');
+  }).select('-cartItems -shippingAddress')
+  .populate({
+    path: 'user',
+    select: 'first_name last_name phone _id'
+  })
 
   if (!orders.length) return next(new AppErr('No orders found for the specified day', 404));
 
