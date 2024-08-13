@@ -13,13 +13,32 @@ export const createCategory = catchAsyncErr(async (req, res, next) => {
     res.status(200).json({ "message": "success","statusCode":200 , result })
 })
 
-
 export const getAllCategory = catchAsyncErr(async (req, res, next) => {
+    const result = await CategoryModel.aggregate([
+        {
+            $lookup: {
+                from: 'menus',
+                localField: '_id',
+                foreignField: 'category',
+                as: 'items'
+            }
+        },
+        {
+            $match: {
+                'items.0': { $exists: true } 
+            }
+        },
+        {
+            $project: {
+                name: 1,
+                createdAt: 1,
+                updatedAt: 1
+            }
+        }
+    ]);
 
-    const result = await CategoryModel.find()
-
-    res.status(200).json({ "message": "success", "statusCode":200 ,result })
-})
+    res.status(200).json({ "message": "success","statusCode":200, result });
+});
 
 
 export const getCategory = catchAsyncErr(async (req, res, next) => {
