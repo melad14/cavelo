@@ -262,7 +262,10 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
   const userId = req.user._id;
 
   const orders = await orderModel.find({ user: userId })
-    .populate( 'cartItems.item')
+    .populate({
+      path: 'cartItems.item',
+      select: 'image name basePrice description extraIngredientPrices sizes _id'
+    })
 
   const filteredItems = orders.flatMap(order =>
     order.cartItems.map(cartItem => ({
@@ -272,6 +275,8 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
       name: cartItem.item.name,
       description: cartItem.item.description,
       basePrice: cartItem.item.basePrice,
+      extraIngredientPrices: cartItem.item.extraIngredientPrices,
+      sizes: cartItem.item.sizes,
     }))
   );
 
