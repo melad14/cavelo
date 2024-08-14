@@ -57,7 +57,7 @@ export const editItem = catchAsyncErr(async (req, res, next) => {
 
 export const getAllMenu = catchAsyncErr(async (req, res, next) => {
 
-  const result = await menuModel.find().select('image name basePrice description _id');
+  const result = await menuModel.find().select('image name basePrice extraIngredientPrices sizes description _id');
 
   res.status(200).json({ "message": "success", "statusCode": 200, result })
 })
