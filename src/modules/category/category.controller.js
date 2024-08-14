@@ -39,6 +39,11 @@ export const getAllCategory = catchAsyncErr(async (req, res, next) => {
 
     res.status(200).json({ "message": "success","statusCode":200, result });
 });
+export const getAllCategoryAdmin = catchAsyncErr(async (req, res, next) => {
+    const result = await CategoryModel.find();
+
+    res.status(200).json({ "message": "success","statusCode":200, result });
+});
 
 
 export const getCategory = catchAsyncErr(async (req, res, next) => {
