@@ -264,7 +264,7 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
   const orders = await orderModel.find({ user: userId })
     .populate({
       path: 'cartItems.item',
-      select: 'image name basePrice description _id'
+      select: 'image name basePrice description extraIngredientPrices sizes _id'
     })
 
   const filteredItems = orders.flatMap(order =>

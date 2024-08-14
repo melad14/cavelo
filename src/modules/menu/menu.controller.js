@@ -107,7 +107,7 @@ export const unsuggestItem = catchAsyncErr(async (req, res, next) => {
 
 // Controller to get all suggested items
 export const getSuggestedItems = catchAsyncErr(async (req, res, next) => {
-  const result = await menuModel.find({ suggested: true }).select('image name basePrice description _id');
+  const result = await menuModel.find({ suggested: true }).select('image name basePrice extraIngredientPrices sizes description _id');
   if (!result) return next(new AppErr('No suggested items found', 404));
 
   res.status(200).json({ "message": "success", "statusCode": 200, result });
