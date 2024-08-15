@@ -184,7 +184,7 @@ const complete = catchAsyncErr(async (req, res, next) => {
   const orders = await orderModel.find({
     createdAt: {  $gte: today,  $lt: tomorrow},
     paid: true
-  }).select('paymentmethod totalOrderPrice createdAt _id')
+  }).select('paymentmethod totalOrderPrice orderNum createdAt _id')
   if (!orders) return next(new AppErr('orders not found', 404))
   res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
@@ -198,7 +198,7 @@ export const getMonthInvoices = catchAsyncErr(async (req, res, next) => {
   const orders = await orderModel.find({
     createdAt: { $gte: firstDayOfMonth, $lt: firstDayOfNextMonth },
     paid: true
-  }).select('paymentmethod totalOrderPrice createdAt _id');
+  }).select('paymentmethod totalOrderPrice orderNum createdAt _id');
 
   if (!orders) return next(new AppErr('Orders not found', 404));
   res.status(200).json({ message: "Success", statusCode: 200, orders });
@@ -230,7 +230,7 @@ export const getIncomesByDay = catchAsyncErr(async (req, res, next) => {
       $lt: nextDay
     },
     paid: true
-  }).select(('paymentmethod totalOrderPrice createdAt _id'));
+  }).select(('paymentmethod totalOrderPrice orderNum createdAt _id'));
 
   if (!orders.length) return next(new AppErr('No orders found for the specified day', 404));
 
