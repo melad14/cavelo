@@ -173,7 +173,7 @@ const complete = catchAsyncErr(async (req, res, next) => {
   res.status(200).json({ "message": "Success", "statusCode": 200, order });
 });
 
-const getAllordersIncomes = catchAsyncErr(async (req, res, next) => {
+ const getCurrentDayInvoices = catchAsyncErr(async (req, res, next) => {
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -181,18 +181,29 @@ const getAllordersIncomes = catchAsyncErr(async (req, res, next) => {
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
 
-  // Find orders created today
   const orders = await orderModel.find({
-    createdAt: {
-      $gte: today,
-      $lt: tomorrow
-    },
+    createdAt: {  $gte: today,  $lt: tomorrow},
     paid: true
   }).select('paymentmethod totalOrderPrice createdAt _id')
   if (!orders) return next(new AppErr('orders not found', 404))
   res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
 })
+export const getMonthInvoices = catchAsyncErr(async (req, res, next) => {
+  const today = new Date();
+
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const firstDayOfNextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+
+  const orders = await orderModel.find({
+    createdAt: { $gte: firstDayOfMonth, $lt: firstDayOfNextMonth },
+    paid: true
+  }).select('paymentmethod totalOrderPrice createdAt _id');
+
+  if (!orders) return next(new AppErr('Orders not found', 404));
+  res.status(200).json({ message: "Success", statusCode: 200, orders });
+});
+
 export const getIncomesByDay = catchAsyncErr(async (req, res, next) => {
   const { date } = req.body;
 
@@ -200,9 +211,8 @@ export const getIncomesByDay = catchAsyncErr(async (req, res, next) => {
     return next(new AppErr('Date is required', 400));
   }
 
-  // Parse the date in the format DD-MM-YYYY
   const [day, month, year] = date.split('-');
-  const specificDate = new Date(year, month - 1, day); // month is 0-indexed in JavaScript Date
+  const specificDate = new Date(year, month - 1, day);
 
   if (isNaN(specificDate.getTime())) {
     return next(new AppErr('Invalid date format', 400));
@@ -288,7 +298,7 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
 
 export {
   ctreateCashOrder, cancel,
-  getSpecificorders, getAllordersIncomes,
+  getSpecificorders, getCurrentDayInvoices,
   getAllorders, complete,
   paid, deliverd, AdminGetOrder, userGetOrder, userGetOrderHistory
 
