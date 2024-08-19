@@ -172,9 +172,9 @@ const complete = catchAsyncErr(async (req, res, next) => {
   pusher.trigger('cavelo', 'orderComplete', order);
 
   const notification = new notificationModel({
-    title: "New order Assigned",
-    message: `You have been assigned a new order. Order ID: ${order._id}`,
-    notid: req.user.first_name
+    title: "order completed",
+    message: `order completed . Order ID: ${order._id}`,
+    notid: ''
   });
   await notification.save();
   if (!order) return next(new AppErr('Order not found', 404));
@@ -263,8 +263,15 @@ const { deliveryPerson }=req.body
 const deliverd = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
-  await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
+  const order=await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
   pusher.trigger('cavelo', 'orderDelivered');
+  const notification = new notificationModel({
+    title: " order deliverd",
+    message: `order deliverd. Order ID: ${order._id}`,
+    notid: ''
+  });
+  await notification.save();
+
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
@@ -272,8 +279,14 @@ const deliverd = catchAsyncErr(async (req, res, next) => {
 const paid = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
-  await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
+ const order = await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
   pusher.trigger('cavelo', 'orderPaid');
+  const notification = new notificationModel({
+    title: " order paid",
+    message: `order paid. Order ID: ${order._id}`,
+    notid: ''
+  });
+  await notification.save();
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
@@ -281,8 +294,14 @@ const paid = catchAsyncErr(async (req, res, next) => {
 const cancel = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
-  await orderModel.findByIdAndUpdate(id, { cancel: true }, { new: true })
+  const order=await orderModel.findByIdAndUpdate(id, { cancel: true }, { new: true })
   pusher.trigger('cavelo', 'orderCanceld');
+  const notification = new notificationModel({
+    title: " order canceled",
+    message: `order canceled. Order ID: ${order._id}`,
+    notid: ''
+  });
+  await notification.save();
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
