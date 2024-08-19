@@ -30,6 +30,7 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 
   if (order) {
     await cartModel.findOneAndDelete({ user: req.user._id });
+
     pusher.trigger('cavelo', 'newOrder', order);
 
     const notification = new notificationModel({
@@ -168,6 +169,14 @@ const complete = catchAsyncErr(async (req, res, next) => {
 
   let order = await orderModel.findByIdAndUpdate(id, { iscomplete: true }, { new: true });
 
+  pusher.trigger('cavelo', 'orderComplete', order);
+
+  const notification = new notificationModel({
+    title: "New order Assigned",
+    message: `You have been assigned a new order. Order ID: ${order._id}`,
+    notid: req.user.first_name
+  });
+  await notification.save();
   if (!order) return next(new AppErr('Order not found', 404));
 
   res.status(200).json({ "message": "Success", "statusCode": 200, order });
@@ -250,11 +259,12 @@ const { deliveryPerson }=req.body
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
+
 const deliverd = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
   await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
-
+  pusher.trigger('cavelo', 'orderDelivered');
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
@@ -263,7 +273,7 @@ const paid = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
   await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
-
+  pusher.trigger('cavelo', 'orderPaid');
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
@@ -272,6 +282,7 @@ const cancel = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
   await orderModel.findByIdAndUpdate(id, { cancel: true }, { new: true })
+  pusher.trigger('cavelo', 'orderCanceld');
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
@@ -303,11 +314,7 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
 
 
 export {
-  ctreateCashOrder, cancel,
-  getSpecificorders, getCurrentDayInvoices,
-  getAllorders, complete,
-  paid, deliverd, AdminGetOrder, userGetOrder, userGetOrderHistory
-
-
+  ctreateCashOrder, cancel, getSpecificorders, getCurrentDayInvoices,
+  getAllorders, complete,paid, deliverd, AdminGetOrder, userGetOrder, userGetOrderHistory
 }
 
