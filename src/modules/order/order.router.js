@@ -1,5 +1,5 @@
 import express from "express"
-import {   AdminGetOrder, cancel, complete, ctreateCashOrder, deliverd, getAllorders, getCurrentDayInvoices,
+import {   AdminGetOrder, cancel, complete, ctreateCashOrder, deliverd, deliveryPerson, getAllorders, getCurrentDayInvoices,
      getIncomesByDay, getMonthInvoices, getOrdersByDay, getSpecificorders, getTodayorders, paid, userGetOrder, userGetOrderHistory } from "./order.controller.js"
 import { allowTo, protectedRoutes } from "../../middleware/protectedRoute.js";
 
@@ -13,6 +13,7 @@ orderRouter.get('/admin-get-order/:id',protectedRoutes,allowTo('admin'),AdminGet
 orderRouter.get('/user-get-order/:id',protectedRoutes,allowTo('user'),userGetOrder)
 orderRouter.put('/complete/:id',protectedRoutes,allowTo('admin'),complete)
 orderRouter.put('/deliverd/:id',protectedRoutes,allowTo('admin'),deliverd)
+orderRouter.put('/deliveryPerson/:id',protectedRoutes,allowTo('admin'),deliveryPerson)
 orderRouter.put('/paid/:id',protectedRoutes,allowTo('admin'),paid)
 orderRouter.put('/cancel/:id',protectedRoutes,allowTo('admin','user'),cancel)
 

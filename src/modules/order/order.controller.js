@@ -242,6 +242,14 @@ export const getIncomesByDay = catchAsyncErr(async (req, res, next) => {
 
 })
 
+export const deliveryPerson = catchAsyncErr(async (req, res, next) => {
+const { deliveryPerson }=req.body
+  const { id } = req.params
+  await orderModel.findByIdAndUpdate(id, { deliveryPerson }, { new: true })
+
+  res.status(200).json({ "message": " success", "statusCode": 200 })
+
+})
 const deliverd = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params

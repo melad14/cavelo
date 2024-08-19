@@ -58,6 +58,9 @@ const orderSchema = mongoose.Schema({
     type: Boolean,
     default: false
   },
+  deliveryPerson: {
+    type: String,
+  },
   deliveredAt: Date,
   iscomplete: {
     type: Boolean,
