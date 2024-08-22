@@ -3,10 +3,10 @@ import { addAdress, getAllAdresses, removeAdress, updateAddress } from "./addres
 import { allowTo, protectedRoutes } from "../../middleware/protectedRoute.js";
 
 const addressRouter = express.Router()
-addressRouter.patch('/add-address',protectedRoutes,allowTo('user'),addAdress)
-addressRouter.put('/update-address/:id',protectedRoutes,allowTo('user'),updateAddress)
-addressRouter.delete('/remove',protectedRoutes,allowTo('user'),removeAdress)
-addressRouter.get('/get-addresses',protectedRoutes,allowTo('user'),getAllAdresses)
+addressRouter.patch('/add-address',protectedRoutes,allowTo('user','waiter'),addAdress)
+addressRouter.put('/update-address/:id',protectedRoutes,allowTo('user','waiter'),updateAddress)
+addressRouter.delete('/remove',protectedRoutes,allowTo('user','waiter'),removeAdress)
+addressRouter.get('/get-addresses',protectedRoutes,allowTo('user','waiter'),getAllAdresses)
 
 
 export default addressRouter

@@ -19,9 +19,9 @@ menuRouter.put('/edit-item/:id', protectedRoutes, allowTo('admin'),
     upload.fields([ { name: 'image', maxCount: 1 }]), editItem);
 
 
-menuRouter.get('/get-item/:id', protectedRoutes, allowTo('user','admin'), getitem);
-menuRouter.get('/get-menu', protectedRoutes, allowTo('user','admin'), getAllMenu);
-menuRouter.get('/get-menu/category/', protectedRoutes, allowTo('user','admin'), getAllMenuByCat);
+menuRouter.get('/get-item/:id', protectedRoutes, allowTo('user','admin','waiter'), getitem);
+menuRouter.get('/get-menu', protectedRoutes, allowTo('user','admin','waiter'), getAllMenu);
+menuRouter.get('/get-menu/category/', protectedRoutes, allowTo('user','admin','waiter'), getAllMenuByCat);
 
 menuRouter.delete('/delete-item/:id', protectedRoutes, allowTo('admin'), deleteItem);
 
@@ -29,6 +29,6 @@ menuRouter.patch('/suggest/:id', protectedRoutes, allowTo('admin'), suggestItem)
 menuRouter.patch('/unsuggest/:id', protectedRoutes, allowTo('admin'), unsuggestItem);
 
 
-menuRouter.get('/suggested',protectedRoutes, allowTo('admin','user'), getSuggestedItems);
+menuRouter.get('/suggested',protectedRoutes, allowTo('admin','user','waiter'), getSuggestedItems);
 
 export default menuRouter

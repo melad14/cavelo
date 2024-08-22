@@ -4,13 +4,13 @@ import {   AdminGetOrder, cancel, complete, ctreateCashOrder, deliverd, delivery
 import { allowTo, protectedRoutes } from "../../middleware/protectedRoute.js";
 
 const orderRouter = express.Router()
-orderRouter.post('/cash/:id',protectedRoutes,allowTo('user'),ctreateCashOrder)
-orderRouter.get('/get-user-order',protectedRoutes,allowTo('user'),getSpecificorders)
+orderRouter.post('/cash/:id',protectedRoutes,allowTo('user','waiter'),ctreateCashOrder)
+orderRouter.get('/get-user-order',protectedRoutes,allowTo('user','waiter'),getSpecificorders)
 orderRouter.get('/get-all-orders',protectedRoutes,allowTo('admin'),getAllorders)
 orderRouter.get('/get-today-orders',protectedRoutes,allowTo('admin'),getTodayorders)
 orderRouter.get('/get-day-orders',protectedRoutes,allowTo('admin'),getOrdersByDay)
 orderRouter.get('/admin-get-order/:id',protectedRoutes,allowTo('admin'),AdminGetOrder)
-orderRouter.get('/user-get-order/:id',protectedRoutes,allowTo('user'),userGetOrder)
+orderRouter.get('/user-get-order/:id',protectedRoutes,allowTo('user','waiter'),userGetOrder)
 orderRouter.put('/complete/:id',protectedRoutes,allowTo('admin'),complete)
 orderRouter.put('/deliverd/:id',protectedRoutes,allowTo('admin'),deliverd)
 orderRouter.put('/deliveryPerson/:id',protectedRoutes,allowTo('admin'),deliveryPerson)
@@ -21,6 +21,6 @@ orderRouter.get('/get-day-incomes',protectedRoutes,allowTo('admin'),getIncomesBy
 orderRouter.get('/get-today-incomes',protectedRoutes,allowTo('admin'),getCurrentDayInvoices)
 orderRouter.get('/get-month-incomes',protectedRoutes,allowTo('admin'),getMonthInvoices)
 
-orderRouter.get('/my-orders',protectedRoutes,allowTo('user'),userGetOrderHistory)
+orderRouter.get('/my-orders',protectedRoutes,allowTo('user','waiter'),userGetOrderHistory)
 
 export default orderRouter

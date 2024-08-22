@@ -16,19 +16,19 @@ let userRouter = express.Router();
 userRouter.post('/signin',validation(signInSchema)  ,signin);
 userRouter.post('/verify', validation(verifySchema) , verifyOTP);
 
-userRouter.post('/complete-profile', protectedRoutes, allowTo('user','admin'), completeProfile);
+userRouter.post('/complete-profile', protectedRoutes, allowTo('waiter','user','admin'), completeProfile);
 
 
-userRouter.post('/upload-pic', protectedRoutes, allowTo('admin','user'),
+userRouter.post('/upload-pic', protectedRoutes, allowTo('waiter','admin','user'),
     upload.fields([ { name: 'image', maxCount: 1 }]),   uploadImage);
 
-userRouter.put('/edit-profile', protectedRoutes, allowTo('user','admin'),
+userRouter.put('/edit-profile', protectedRoutes, allowTo('waiter','user','admin'),
     upload.fields([ { name: 'image', maxCount: 1 }]),   editProfile);
 
 
-userRouter.get('/get-profile', protectedRoutes, allowTo('user','admin'), getProfile);
+userRouter.get('/get-profile', protectedRoutes, allowTo('waiter','user','admin'), getProfile);
 
-userRouter.delete('/delete-acc', protectedRoutes, allowTo('user'), deleteAcc);
+userRouter.delete('/delete-acc', protectedRoutes, allowTo('waiter','user'), deleteAcc);
 
 
 
