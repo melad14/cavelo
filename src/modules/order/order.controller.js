@@ -82,8 +82,6 @@ const userGetOrder = catchAsyncErr(async (req, res, next) => {
       path: 'cartItems.item',
       select: 'image name basePrice description _id'
     })
-
-
   res.status(200).json({ "message": " success", "statusCode": 200, order })
 
 })
@@ -264,7 +262,7 @@ const deliverd = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
   const order=await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
-  pusher.trigger('cavelo', 'orderDelivered');
+  pusher.trigger('cavelo', 'orderDelivered',order);
   const notification = new notificationModel({
     title: " order deliverd",
     message: `order deliverd. Order ID: ${order._id}`,
@@ -280,7 +278,7 @@ const paid = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
  const order = await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
-  pusher.trigger('cavelo', 'orderPaid');
+  pusher.trigger('cavelo', 'orderPaid',order);
   const notification = new notificationModel({
     title: " order paid",
     message: `order paid. Order ID: ${order._id}`,
@@ -295,7 +293,7 @@ const cancel = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
   const order=await orderModel.findByIdAndUpdate(id, { cancel: true }, { new: true })
-  pusher.trigger('cavelo', 'orderCanceld');
+  pusher.trigger('cavelo', 'orderCanceld',order);
   const notification = new notificationModel({
     title: " order canceled",
     message: `order canceled. Order ID: ${order._id}`,
@@ -330,7 +328,6 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
 
   res.status(200).json({ "message": "Success", "statusCode": 200, orders: filteredItems });
 });
-
 
 export {
   ctreateCashOrder, cancel, getSpecificorders, getCurrentDayInvoices,
