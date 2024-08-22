@@ -68,7 +68,7 @@ const AdminGetOrder = catchAsyncErr(async (req, res, next) => {
   })
   .populate({
     path: 'user',
-    select: 'first_name last_name phone _id'
+    select: 'first_name last_name phone role _id'
   })
   if (!order) return next(new AppErr('order not found', 404))
   res.status(200).json({ "message": " success", "statusCode": 200, order })
@@ -91,7 +91,7 @@ const getAllorders = catchAsyncErr(async (req, res, next) => {
   let orders = await orderModel.find().select('-cartItems -shippingAddress')
   .populate({
     path: 'user',
-    select: 'first_name last_name phone _id'
+    select: 'first_name last_name phone role _id'
   })
   if (!orders) return next(new AppErr('orders not found', 404))
   res.status(200).json({ "message": " success", "statusCode": 200, orders })
@@ -114,7 +114,7 @@ export const getTodayorders = catchAsyncErr(async (req, res, next) => {
   }).select('-cartItems -shippingAddress')
   .populate({
     path: 'user',
-    select: 'first_name last_name phone _id'
+    select: 'first_name last_name phone role _id'
   })
   if (!orders) return next(new AppErr('No orders found for today', 404))
   res.status(200).json({ "message": " success", "statusCode": 200, orders })
@@ -149,7 +149,7 @@ export const getOrdersByDay = catchAsyncErr(async (req, res, next) => {
   }).select('-cartItems -shippingAddress')
   .populate({
     path: 'user',
-    select: 'first_name last_name phone _id'
+    select: 'first_name last_name phone role _id'
   })
 
   if (!orders.length) return next(new AppErr('No orders found for the specified day', 404));
@@ -294,6 +294,7 @@ const cancel = catchAsyncErr(async (req, res, next) => {
   const { id } = req.params
   const order=await orderModel.findByIdAndUpdate(id, { cancel: true }, { new: true })
   pusher.trigger('cavelo', 'orderCanceld',order);
+
   const notification = new notificationModel({
     title: " order canceled",
     message: `order canceled. Order ID: ${order._id}`,
