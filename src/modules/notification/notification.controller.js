@@ -22,7 +22,6 @@ export const getNotifications = catchAsyncErr(async (req, res, next) => {
 export const getAdminNotifications = catchAsyncErr(async (req, res, next) => {
 
     const notifications = await notificationModel.find({notid:'admin'}).sort({ createdAt: -1 });
-
     res.status(200).json({ "message": " success", "statusCode":200 ,notifications })
 
 });
