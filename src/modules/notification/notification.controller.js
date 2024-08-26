@@ -9,6 +9,7 @@ export const createNotifications = catchAsyncErr(async (req, res, next) => {
     
     req.body.notid='admin'
     const notification = new notificationModel(req.body);
+    await notification.save()
     res.status(200).json({ "message": " success", "statusCode":200 ,notification })
 
 });
