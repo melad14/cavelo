@@ -2,14 +2,25 @@ import { notificationModel } from "../../../databases/models/notifcation.js";
 import { AppErr } from "../../utils/AppErr.js";
 import { catchAsyncErr } from "../../utils/catcherr.js";
 import cron from 'node-cron';
+import Pusher from 'pusher';
 
-
+const pusher = new Pusher({
+    appId: "1832769",
+    key: "74fa23b5f9fdd3fa37f0",
+    secret: "c59f35157bcebbfb400a",
+    cluster: "eu",
+    useTLS: true
+  });
+  
+  
+  
 
 export const createNotifications = catchAsyncErr(async (req, res, next) => {
     
     req.body.notid='admin'
     const notification = new notificationModel(req.body);
     await notification.save()
+    pusher.trigger('cavelo', 'newNotification', notification);
     res.status(200).json({ "message": " success", "statusCode":200 ,notification })
 
 });
