@@ -7,7 +7,7 @@ import cron from 'node-cron';
 
 export const createNotifications = catchAsyncErr(async (req, res, next) => {
     
-
+    req.body.notid='admin'
     const notification = new notificationModel(req.body);
     res.status(200).json({ "message": " success", "statusCode":200 ,notification })
 
@@ -15,6 +15,13 @@ export const createNotifications = catchAsyncErr(async (req, res, next) => {
 export const getNotifications = catchAsyncErr(async (req, res, next) => {
 
     const notifications = await notificationModel.find().sort({ createdAt: -1 });
+
+    res.status(200).json({ "message": " success", "statusCode":200 ,notifications })
+
+});
+export const getAdminNotifications = catchAsyncErr(async (req, res, next) => {
+
+    const notifications = await notificationModel.find({notid:'admin'}).sort({ createdAt: -1 });
 
     res.status(200).json({ "message": " success", "statusCode":200 ,notifications })
 

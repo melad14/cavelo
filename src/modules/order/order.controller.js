@@ -36,7 +36,7 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
     const notification = new notificationModel({
       title: "New order Assigned",
       message: `You have been assigned a new order. Order ID: ${order._id}`,
-      notid: req.user.first_name
+
     });
     await notification.save();
 
@@ -172,7 +172,7 @@ const complete = catchAsyncErr(async (req, res, next) => {
   const notification = new notificationModel({
     title: "order completed",
     message: `order completed . Order ID: ${order._id}`,
-    notid: ''
+
   });
   await notification.save();
   if (!order) return next(new AppErr('Order not found', 404));
@@ -266,7 +266,7 @@ const deliverd = catchAsyncErr(async (req, res, next) => {
   const notification = new notificationModel({
     title: " order deliverd",
     message: `order deliverd. Order ID: ${order._id}`,
-    notid: ''
+   
   });
   await notification.save();
 
@@ -282,7 +282,7 @@ const paid = catchAsyncErr(async (req, res, next) => {
   const notification = new notificationModel({
     title: " order paid",
     message: `order paid. Order ID: ${order._id}`,
-    notid: ''
+   
   });
   await notification.save();
   res.status(200).json({ "message": " success", "statusCode": 200 })
@@ -298,7 +298,7 @@ const cancel = catchAsyncErr(async (req, res, next) => {
   const notification = new notificationModel({
     title: " order canceled",
     message: `order canceled. Order ID: ${order._id}`,
-    notid: ''
+    
   });
   await notification.save();
   res.status(200).json({ "message": " success", "statusCode": 200 })
