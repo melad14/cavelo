@@ -60,6 +60,7 @@ const orderSchema = mongoose.Schema({
   },
   deliveryPerson: {
     type: String,
+    default:""
   },
   deliveredAt: Date,
   iscomplete: {
