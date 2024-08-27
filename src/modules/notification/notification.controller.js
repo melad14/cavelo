@@ -8,7 +8,7 @@ import { sendNotificationToAll } from "./oneSignalPushNotification.js";
 
 export const createNotifications = catchAsyncErr(async (req, res, next) => {
     const{title,message}=req.body
-    const notid='admin'
+    let notid='admin'
     const notification = new notificationModel({title,message,notid});
     await notification.save()
     await sendNotificationToAll(title,message)
