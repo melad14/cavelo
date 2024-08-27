@@ -9,6 +9,7 @@ export const signInSchema = Joi.object({
 
 export const verifySchema = Joi.object({
     phone: Joi.string().pattern(egyptianPhoneNumberPattern).required(),
-    otp: Joi.string().length(6).required()
+    otp: Joi.string().length(6).required(),
+    subscriptionId:Joi.string(),
   });
   
