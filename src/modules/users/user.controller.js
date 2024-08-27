@@ -18,12 +18,12 @@ const signin = catchAsyncErr(async (req, res, next) => {
     }
   
     if (!user) {
-      const user = new userModel({ phone })
+      const user = new userModel({ phone, subscriptionId})
       await user.save();
   
       const otp = generateOTP();
       const otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
-      await userModel.findOneAndUpdate({ phone }, { otp, otpExpires, code: 0,subscriptionId }, { new: true });
+      await userModel.findOneAndUpdate({ phone }, { otp, otpExpires, code: 0 }, { new: true });
       await sendSMSTest(phone, `Your OTP is ${otp}`);
   
       res.status(200).json({ "message": "User created and OTP sent", "statusCode": 200 });
