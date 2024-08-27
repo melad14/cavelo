@@ -6,16 +6,6 @@ import { catchAsyncErr } from './../../utils/catcherr.js';
 
 
 
-import Pusher from 'pusher';
-
-const pusher = new Pusher({
-    appId: "1832769",
-    key: "74fa23b5f9fdd3fa37f0",
-    secret: "c59f35157bcebbfb400a",
-    cluster: "eu",
-    useTLS: true
-  });
-
 
 export const createReservation =catchAsyncErr( async (req, res, next) => {
         const id=req.user._id
@@ -27,7 +17,7 @@ export const createReservation =catchAsyncErr( async (req, res, next) => {
         const reservation = new Reservation(req.body);
         if(!reservation) return  next(new AppErr('error creating reservation', 400))
         await reservation.save();
-        pusher.trigger('cavelo', 'newReservation', reservation);
+      
         const notification = new notificationModel({
                 title: "New reservation Assigned",
                 message: `You have been assigned a new reservation. reservation ID: ${reservation._id}`,

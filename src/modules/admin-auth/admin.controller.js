@@ -21,14 +21,14 @@ export const create_account = catchAsyncErr(async (req, res, next) => {
 });
 
 export const signIn_admin = catchAsyncErr(async (req, res, next) => { 
-    const { phone } = req.body
+    const { phone,subscriptionId } = req.body
     let user = await userModel.findOne({ phone })
     if (!user || user.role!=="admin") {
         return next(new AppErr("incorrect phone or you are not authorized", 501))
      }
      const otp = generateOTP();
      const otpExpires = new Date(Date.now() + 10 * 60000);
-     await userModel.findOneAndUpdate({ phone }, { otp, otpExpires }, { new: true });
+     await userModel.findOneAndUpdate({ phone }, { otp, otpExpires ,subscriptionId}, { new: true });
      await sendSMSTest(phone, `Your OTP is ${otp}`);
      res.status(200).json({ "message": "OTP sent", "statusCode": 200, });
 

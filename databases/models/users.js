@@ -54,6 +54,10 @@ adresses: [{
 }],
   code: {  
     type:Number,
+    },
+
+    subscriptionId:{
+      type:String
     }
 
 }, { timestamps: true });

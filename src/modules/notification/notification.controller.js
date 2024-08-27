@@ -3,6 +3,7 @@ import { AppErr } from "../../utils/AppErr.js";
 import { catchAsyncErr } from "../../utils/catcherr.js";
 import cron from 'node-cron';
 import Pusher from 'pusher';
+import { sendNotificationToAll } from "./oneSignalPushNotification.js";
 
 const pusher = new Pusher({
     appId: "1832769",
@@ -16,11 +17,11 @@ const pusher = new Pusher({
   
 
 export const createNotifications = catchAsyncErr(async (req, res, next) => {
-    
-    req.body.notid='admin'
-    const notification = new notificationModel(req.body);
+    const{title,message}=req.body
+    notid='admin'
+    const notification = new notificationModel({title,message,notid});
     await notification.save()
-    pusher.trigger('cavelo', 'newNotification', notification);
+    await sendNotificationToAll(title,message)
     res.status(200).json({ "message": " success", "statusCode":200 ,notification })
 
 });

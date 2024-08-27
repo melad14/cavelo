@@ -1,18 +1,10 @@
 import { cartModel } from "../../../databases/models/cart.js"
+import { userModel } from "../../../databases/models/users.js";
 import { AppErr } from "../../utils/AppErr.js";
 import { catchAsyncErr } from "../../utils/catcherr.js"
+import { sendNotificationToSpecificUser } from "../notification/oneSignalPushNotification.js";
 import { orderModel } from './../../../databases/models/Order.js';
-import { notificationModel } from './../../../databases/models/notifcation.js';
-import Pusher from 'pusher';
-
-
-const pusher = new Pusher({
-  appId: "1832769",
-  key: "74fa23b5f9fdd3fa37f0",
-  secret: "c59f35157bcebbfb400a",
-  cluster: "eu",
-  useTLS: true
-});
+//import { notificationModel } from './../../../databases/models/notifcation.js';
 
 
 
@@ -31,15 +23,11 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
   if (order) {
     await cartModel.findOneAndDelete({ user: req.user._id });
 
-    pusher.trigger('cavelo', 'newOrder', order);
-
-    const notification = new notificationModel({
-      title: "New order Assigned",
-      message: `You have been assigned a new order. Order ID: ${order._id}`,
-
-    });
-    await notification.save();
-
+    let user=await userModel.findById(order.user)
+    let title="order completed"
+    let message="your order is completed and ready to deliverd "
+    let playerId=user.subscriptionId
+     await sendNotificationToSpecificUser(playerId, title, message)
 
 
     res.status(200).json({ "message": "success", "statusCode": 200, order });
@@ -166,17 +154,12 @@ const complete = catchAsyncErr(async (req, res, next) => {
   const { id } = req.params;
 
   let order = await orderModel.findByIdAndUpdate(id, { iscomplete: true }, { new: true });
+  let user=await userModel.findById(order.user)
 
-  pusher.trigger('cavelo', 'orderComplete', order);
-
-  const notification = new notificationModel({
-    title: "order completed",
-    message: `order completed . Order ID: ${order._id}`,
-
-  });
-  await notification.save();
-  if (!order) return next(new AppErr('Order not found', 404));
-
+let title="order completed"
+let message="your order is completed and ready to deliverd "
+let playerId=user.subscriptionId
+ await sendNotificationToSpecificUser(playerId, title, message)
   res.status(200).json({ "message": "Success", "statusCode": 200, order });
 });
 
@@ -262,13 +245,11 @@ const deliverd = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
   const order=await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
-  pusher.trigger('cavelo', 'orderDelivered',order);
-  const notification = new notificationModel({
-    title: " order deliverd",
-    message: `order deliverd. Order ID: ${order._id}`,
-   
-  });
-  await notification.save();
+  let user=await userModel.findById(order.user)
+  let title="order completed"
+  let message="your order is completed and ready to deliverd "
+  let playerId=user.subscriptionId
+   await sendNotificationToSpecificUser(playerId, title, message)
 
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
@@ -278,13 +259,11 @@ const paid = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
  const order = await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
-  pusher.trigger('cavelo', 'orderPaid',order);
-  const notification = new notificationModel({
-    title: " order paid",
-    message: `order paid. Order ID: ${order._id}`,
-   
-  });
-  await notification.save();
+ let user=await userModel.findById(order.user)
+ let title="order completed"
+ let message="your order is completed and ready to deliverd "
+ let playerId=user.subscriptionId
+  await sendNotificationToSpecificUser(playerId, title, message)
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
@@ -293,14 +272,11 @@ const cancel = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
   const order=await orderModel.findByIdAndUpdate(id, { cancel: true }, { new: true })
-  pusher.trigger('cavelo', 'orderCanceld',order);
-
-  const notification = new notificationModel({
-    title: " order canceled",
-    message: `order canceled. Order ID: ${order._id}`,
-    
-  });
-  await notification.save();
+  let user=await userModel.findById(order.user)
+  let title="order completed"
+  let message="your order is completed and ready to deliverd "
+  let playerId=user.subscriptionId
+   await sendNotificationToSpecificUser(playerId, title, message)
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
