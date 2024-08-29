@@ -23,6 +23,6 @@ orderRouter.get('/get-month-incomes',protectedRoutes,allowTo('admin'),getMonthIn
 
 orderRouter.get('/my-orders',protectedRoutes,allowTo('user','waiter'),userGetOrderHistory)
 
-orderRouter.get('/search-orders',protectedRoutes,allowTo('user','waiter'),searchOrders)
+orderRouter.get('/search-orders',searchOrders)
 
 export default orderRouter

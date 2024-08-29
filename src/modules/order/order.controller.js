@@ -31,12 +31,19 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
     await cartModel.findOneAndDelete({ user: req.user._id });
     pusher.trigger('cavelo', 'newOrder', order);
 
-    let title="order completed"
-    let message="your order is completed and ready to delivered "
+   
     const admins = await userModel.find({role:"admin"})
+ 
+    
     for (let admin of admins) {
+     
       if (admin.subscriptionId) {
-       let playerId=admin.subscriptionId
+ 
+    
+      
+        const title="order completed"
+         const message="your order is completed and ready to delivered "
+       const  playerId=admin.subscriptionId
         await sendNotificationToSpecificUser(playerId, title, message);
       }
     }
@@ -104,9 +111,10 @@ export const searchOrders = catchAsyncErr(async (req, res, next) => {
   if (search) {
     query = {
       $or: [
-        { "user.first_name": { $regex: search, $options: 'i' } },
-        { "user.last_name": { $regex: search, $options: 'i' } },
-        { "user.phone": { $regex: search, $options: 'i' } }
+        { "shippingAddress.street": { $regex: search, $options: 'i' } },
+        { "shippingAddress.city": { $regex: search, $options: 'i' } },
+        { "shippingAddress.phone": { $regex: search, $options: 'i' } },
+        { "shippingAddress.secondPhone": { $regex: search, $options: 'i' } }
       ]
     };
   }
@@ -117,11 +125,9 @@ export const searchOrders = catchAsyncErr(async (req, res, next) => {
       select: 'first_name last_name phone role _id'
     });
 
-  if (!orders.length) return next(new AppErr('Orders not found', 404));
+  res.status(200).json({ message: "success", statusCode: 200, orders });
+});
 
-  res.status(200).json({ "message": "success", "statusCode": 200, orders });
-
-})
 
 export const getTodayorders = catchAsyncErr(async (req, res, next) => {
   const today = new Date();
