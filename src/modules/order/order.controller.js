@@ -24,19 +24,15 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 
   if (order) {
     await cartModel.findOneAndDelete({ user: req.user._id });
-    const admins = await userModel.find({role:"admin"})
     let title="order completed"
     let message="your order is completed and ready to delivered "
+    const admins = await userModel.find({role:"admin"})
     for (let admin of admins) {
       if (admin.subscriptionId) {
        let playerId=admin.subscriptionId
         await sendNotificationToSpecificUser(playerId, title, message);
       }
     }
-
-  
-     await sendNotificationToSpecificUser(playerId, title, message)
-
 
     res.status(200).json({ "message": "success", "statusCode": 200, order });
   } else {
