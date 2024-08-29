@@ -96,6 +96,32 @@ const getAllorders = catchAsyncErr(async (req, res, next) => {
   res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
 })
+export const searchOrders = catchAsyncErr(async (req, res, next) => {
+  const { search } = req.body;
+
+  let query = {};
+
+  if (search) {
+    query = {
+      $or: [
+        { "user.first_name": { $regex: search, $options: 'i' } },
+        { "user.last_name": { $regex: search, $options: 'i' } },
+        { "user.phone": { $regex: search, $options: 'i' } }
+      ]
+    };
+  }
+
+  let orders = await orderModel.find(query).select('-cartItems ')
+    .populate({
+      path: 'user',
+      select: 'first_name last_name phone role _id'
+    });
+
+  if (!orders.length) return next(new AppErr('Orders not found', 404));
+
+  res.status(200).json({ "message": "success", "statusCode": 200, orders });
+
+})
 
 export const getTodayorders = catchAsyncErr(async (req, res, next) => {
   const today = new Date();
