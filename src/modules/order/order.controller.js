@@ -8,6 +8,8 @@ import { orderModel } from './../../../databases/models/Order.js';
 
 
 
+
+
 const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
   const cart = await cartModel.findById(req.params.id);
   if (!cart) return next(new AppErr('cart not found', 404));
@@ -22,11 +24,17 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 
   if (order) {
     await cartModel.findOneAndDelete({ user: req.user._id });
-
-    let user=await userModel.findById(order.user)
+    const admins = await userModel.find({role:"admin"})
     let title="order completed"
-    let message="your order is completed and ready to deliverd "
-    let playerId=user.subscriptionId
+    let message="your order is completed and ready to delivered "
+    for (let admin of admins) {
+      if (admin.subscriptionId) {
+       let playerId=admin.subscriptionId
+        await sendNotificationToSpecificUser(playerId, title, message);
+      }
+    }
+
+  
      await sendNotificationToSpecificUser(playerId, title, message)
 
 
@@ -157,7 +165,7 @@ const complete = catchAsyncErr(async (req, res, next) => {
   let user=await userModel.findById(order.user)
 
 let title="order completed"
-let message="your order is completed and ready to deliverd "
+let message="your order is completed and ready to delivered "
 let playerId=user.subscriptionId
  await sendNotificationToSpecificUser(playerId, title, message)
   res.status(200).json({ "message": "Success", "statusCode": 200, order });
@@ -241,13 +249,13 @@ const { deliveryPerson }=req.body
 
 })
 
-const deliverd = catchAsyncErr(async (req, res, next) => {
+const delivered = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
   const order=await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
   let user=await userModel.findById(order.user)
   let title="order completed"
-  let message="your order is completed and ready to deliverd "
+  let message="your order is delivered  "
   let playerId=user.subscriptionId
    await sendNotificationToSpecificUser(playerId, title, message)
 
@@ -261,7 +269,7 @@ const paid = catchAsyncErr(async (req, res, next) => {
  const order = await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
  let user=await userModel.findById(order.user)
  let title="order completed"
- let message="your order is completed and ready to deliverd "
+ let message="your order is paid"
  let playerId=user.subscriptionId
   await sendNotificationToSpecificUser(playerId, title, message)
   res.status(200).json({ "message": " success", "statusCode": 200 })
@@ -274,7 +282,7 @@ const cancel = catchAsyncErr(async (req, res, next) => {
   const order=await orderModel.findByIdAndUpdate(id, { cancel: true }, { new: true })
   let user=await userModel.findById(order.user)
   let title="order completed"
-  let message="your order is completed and ready to deliverd "
+  let message="your order is canceled "
   let playerId=user.subscriptionId
    await sendNotificationToSpecificUser(playerId, title, message)
   res.status(200).json({ "message": " success", "statusCode": 200 })
@@ -308,6 +316,6 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
 
 export {
   ctreateCashOrder, cancel, getSpecificorders, getCurrentDayInvoices,
-  getAllorders, complete,paid, deliverd, AdminGetOrder, userGetOrder, userGetOrderHistory
+  getAllorders, complete,paid, delivered, AdminGetOrder, userGetOrder, userGetOrderHistory
 }
 
