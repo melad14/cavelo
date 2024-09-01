@@ -362,6 +362,7 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
       basePrice: cartItem.item?.basePrice,
       extraIngredientPrices: cartItem.item?.extraIngredientPrices,
       sizes: cartItem.item?.sizes,
+      hide: cartItem.item?.hide,
     }))
   );
 
