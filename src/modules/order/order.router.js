@@ -1,6 +1,6 @@
 import express from "express"
 import {   AdminGetOrder, cancel, complete, ctreateCashOrder, delivered, deliveryPerson, getAllorders, getCurrentDayInvoices,
-     getIncomesByDay, getMonthInvoices, getOrdersByDay, getSpecificorders, getTodayorders, paid, searchOrders, userGetOrder, userGetOrderHistory } from "./order.controller.js"
+     getIncomesByDay, getMonthInvoices, getOrdersByDay, getSpecificorders, getTodayorders, paid, searchOrders, updateOrder, userGetOrder, userGetOrderHistory } from "./order.controller.js"
 import { allowTo, protectedRoutes } from "../../middleware/protectedRoute.js";
 
 const orderRouter = express.Router()
@@ -24,5 +24,6 @@ orderRouter.get('/get-month-incomes',protectedRoutes,allowTo('admin'),getMonthIn
 orderRouter.get('/my-orders',protectedRoutes,allowTo('user','waiter'),userGetOrderHistory)
 
 orderRouter.get('/search-orders',searchOrders)
+orderRouter.put('/update-order/:id',protectedRoutes,allowTo('admin','user'),updateOrder)
 
 export default orderRouter

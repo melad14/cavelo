@@ -33,6 +33,10 @@ const menuSchema = mongoose.Schema({
   suggested: {
     type: Boolean,
     default: false
+  },
+  hide:{
+    type: Boolean,
+    default: false
   }
 
 }, { timestamps: true });

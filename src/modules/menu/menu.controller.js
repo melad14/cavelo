@@ -78,6 +78,19 @@ export const getitem = catchAsyncErr(async (req, res, next) => {
   res.status(200).json({ "message": "success", "statusCode": 200, result }) 
 })
 
+export const hideItem = catchAsyncErr(async (req, res, next) => {
+  const { id } = req.params
+  const result = await menuModel.findByIdAndUpdate(id,{hide:true},{new:true})
+
+  res.status(200).json({ "message": "success", "statusCode": 200, result }) 
+})
+export const unhideItem = catchAsyncErr(async (req, res, next) => {
+  const { id } = req.params
+  const result = await menuModel.findByIdAndUpdate(id,{hide:false},{new:true})
+
+  res.status(200).json({ "message": "success", "statusCode": 200, result }) 
+})
+
 
 
 export const deleteItem = catchAsyncErr(async (req, res, next) => {

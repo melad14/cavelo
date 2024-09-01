@@ -38,11 +38,9 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
     for (let admin of admins) {
      
       if (admin.subscriptionId) {
- 
-    
       
-        const title="order completed"
-         const message="your order is completed and ready to delivered "
+        const title="New order"
+         const message="please check New order"
        const  playerId=admin.subscriptionId
         await sendNotificationToSpecificUser(playerId, title, message);
       }
@@ -54,7 +52,35 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
   }
 });
 
+export const updateOrder = catchAsyncErr(async (req, res) => {
 
+  const { id } = req.params;
+  const { item, quantity, size, extraIngredients } = req.body;
+
+  const order = await orderModel.findById(id);
+
+
+  const newCartItem = {
+    item,
+    quantity,
+    size,
+    extraIngredients,
+  };
+
+ 
+  order.cartItems.push(newCartItem);
+
+  const newItemTotalPrice =
+    quantity * (newCartItem.basePrice + (size?.price || 0) + extraIngredients.reduce((acc, curr) => acc + curr.price, 0));
+
+  order.totalOrderPrice += newItemTotalPrice;
+
+  await order.save();
+   
+
+    return res.status(200).json({ "message": " success", "statusCode": 200, order});
+
+});
 const getSpecificorders = catchAsyncErr(async (req, res, next) => {
 
   let orders = await orderModel.find({ user: req.user._id })

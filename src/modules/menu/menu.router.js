@@ -3,7 +3,7 @@ import { allowTo, protectedRoutes } from '../../middleware/protectedRoute.js';
 import { upload } from '../../utils/fileUp.js';
 import { 
     createItem, deleteItem, editItem, getAllMenu, getAllMenuByCat, 
-    getitem, getSuggestedItems, suggestItem, unsuggestItem
+    getitem, getSuggestedItems, hideItem, suggestItem, unhideItem, unsuggestItem
  } from './menu.controller.js';
 
 
@@ -20,6 +20,8 @@ menuRouter.put('/edit-item/:id', protectedRoutes, allowTo('admin'),
 
 
 menuRouter.get('/get-item/:id', protectedRoutes, allowTo('user','admin','waiter'), getitem);
+menuRouter.get('/hide-item/:id', protectedRoutes, allowTo('user','admin','waiter'), hideItem);
+menuRouter.get('/unhide-item/:id', protectedRoutes, allowTo('user','admin','waiter'), unhideItem);
 menuRouter.get('/get-menu', protectedRoutes, allowTo('user','admin','waiter'), getAllMenu);
 menuRouter.get('/get-menu/category/', protectedRoutes, allowTo('user','admin','waiter'), getAllMenuByCat);
 
