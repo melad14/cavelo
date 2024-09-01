@@ -20,8 +20,8 @@ menuRouter.put('/edit-item/:id', protectedRoutes, allowTo('admin'),
 
 
 menuRouter.get('/get-item/:id', protectedRoutes, allowTo('user','admin','waiter'), getitem);
-menuRouter.get('/hide-item/:id', protectedRoutes, allowTo('user','admin','waiter'), hideItem);
-menuRouter.get('/unhide-item/:id', protectedRoutes, allowTo('user','admin','waiter'), unhideItem);
+menuRouter.put('/hide-item/:id', protectedRoutes, allowTo('user','admin','waiter'), hideItem);
+menuRouter.put('/unhide-item/:id', protectedRoutes, allowTo('user','admin','waiter'), unhideItem);
 menuRouter.get('/get-menu', protectedRoutes, allowTo('user','admin','waiter'), getAllMenu);
 menuRouter.get('/get-menu/category/', protectedRoutes, allowTo('user','admin','waiter'), getAllMenuByCat);
 
