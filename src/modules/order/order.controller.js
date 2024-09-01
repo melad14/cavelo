@@ -349,7 +349,7 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
   const userId = req.user._id
 
   const orders = await orderModel.find({ user: userId })
-    .populate('cartItems.item')
+    .populate('cartItems.item').sort({ createdAt: -1 });
 
 
   const filteredItems = orders.flatMap(order =>
