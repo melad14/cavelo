@@ -15,6 +15,8 @@ const pusher = new Pusher({
   cluster: "eu",
   useTLS: true
 });
+
+
 const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
   const cart = await cartModel.findById(req.params.id);
   if (!cart) return next(new AppErr('cart not found', 404));
@@ -31,17 +33,17 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
     await cartModel.findOneAndDelete({ user: req.user._id });
     pusher.trigger('cavelo', 'newOrder', order);
 
-   
-    const admins = await userModel.find({role:"admin"})
- 
-    
+
+    const admins = await userModel.find({ role: "admin" })
+
+
     for (let admin of admins) {
-     
+
       if (admin.subscriptionId) {
-      
-        const title="New order"
-         const message="please check New order"
-       const  playerId=admin.subscriptionId
+
+        const title = "New order"
+        const message = "please check New order"
+        const playerId = admin.subscriptionId
         await sendNotificationToSpecificUser(playerId, title, message);
       }
     }
@@ -55,30 +57,19 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 export const updateOrder = catchAsyncErr(async (req, res) => {
 
   const { id } = req.params;
-  const { item, quantity, size, extraIngredients } = req.body;
+  const { item, quantity, size, extraIngredients, totalPrice } = req.body;
 
-  const order = await orderModel.findById(id);
+  const order = await orderModel.findById(id)
+
+  const newCartItem = { item, quantity, size, extraIngredients };
 
 
-  const newCartItem = {
-    item,
-    quantity,
-    size,
-    extraIngredients,
-  };
-
- 
   order.cartItems.push(newCartItem);
-
-  const newItemTotalPrice =
-    quantity * (newCartItem.basePrice + (size?.price || 0) + extraIngredients.reduce((acc, curr) => acc + curr.price, 0));
-
-  order.totalOrderPrice += newItemTotalPrice;
-
+  order.totalOrderPrice = order.totalOrderPrice + totalPrice
   await order.save();
-   
 
-    return res.status(200).json({ "message": " success", "statusCode": 200, order});
+
+  return res.status(200).json({ "message": " success", "statusCode": 200, order });
 
 });
 const getSpecificorders = catchAsyncErr(async (req, res, next) => {
@@ -94,14 +85,14 @@ const getSpecificorders = catchAsyncErr(async (req, res, next) => {
 const AdminGetOrder = catchAsyncErr(async (req, res, next) => {
   const { id } = req.params
   let order = await orderModel.findById(id)
-  .populate({
-    path: 'cartItems.item',
-    select: 'image name basePrice description _id'
-  })
-  .populate({
-    path: 'user',
-    select: 'first_name last_name phone role _id'
-  })
+    .populate({
+      path: 'cartItems.item',
+      select: 'image name basePrice description _id'
+    })
+    .populate({
+      path: 'user',
+      select: 'first_name last_name phone role _id'
+    })
   if (!order) return next(new AppErr('order not found', 404))
   res.status(200).json({ "message": " success", "statusCode": 200, order })
 
@@ -121,10 +112,10 @@ const userGetOrder = catchAsyncErr(async (req, res, next) => {
 const getAllorders = catchAsyncErr(async (req, res, next) => {
 
   let orders = await orderModel.find().select('-cartItems ')
-  .populate({
-    path: 'user',
-    select: 'first_name last_name phone role _id'
-  })
+    .populate({
+      path: 'user',
+      select: 'first_name last_name phone role _id'
+    })
   if (!orders) return next(new AppErr('orders not found', 404))
   res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
@@ -169,10 +160,10 @@ export const getTodayorders = catchAsyncErr(async (req, res, next) => {
       $lt: tomorrow
     }
   }).select('-cartItems ')
-  .populate({
-    path: 'user',
-    select: 'first_name last_name phone role _id'
-  })
+    .populate({
+      path: 'user',
+      select: 'first_name last_name phone role _id'
+    })
   if (!orders) return next(new AppErr('No orders found for today', 404))
   res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
@@ -204,10 +195,10 @@ export const getOrdersByDay = catchAsyncErr(async (req, res, next) => {
       $lt: nextDay
     }
   }).select('-cartItems ')
-  .populate({
-    path: 'user',
-    select: 'first_name last_name phone role _id'
-  })
+    .populate({
+      path: 'user',
+      select: 'first_name last_name phone role _id'
+    })
 
   if (!orders.length) return next(new AppErr('No orders found for the specified day', 404));
 
@@ -224,16 +215,16 @@ const complete = catchAsyncErr(async (req, res, next) => {
 
   let order = await orderModel.findByIdAndUpdate(id, { iscomplete: true }, { new: true });
   pusher.trigger('cavelo', 'orderComplete', order);
-  let user=await userModel.findById(order.user)
+  let user = await userModel.findById(order.user)
 
-let title="order completed"
-let message="your order is completed and ready to delivered "
-let playerId=user.subscriptionId
- await sendNotificationToSpecificUser(playerId, title, message)
+  let title = "order completed"
+  let message = "your order is completed and ready to delivered "
+  let playerId = user.subscriptionId
+  await sendNotificationToSpecificUser(playerId, title, message)
   res.status(200).json({ "message": "Success", "statusCode": 200, order });
 });
 
- const getCurrentDayInvoices = catchAsyncErr(async (req, res, next) => {
+const getCurrentDayInvoices = catchAsyncErr(async (req, res, next) => {
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -242,7 +233,7 @@ let playerId=user.subscriptionId
   tomorrow.setDate(today.getDate() + 1);
 
   const orders = await orderModel.find({
-    createdAt: {  $gte: today,  $lt: tomorrow},
+    createdAt: { $gte: today, $lt: tomorrow },
     paid: true
   }).select('paymentmethod totalOrderPrice orderNum createdAt _id')
   if (!orders) return next(new AppErr('orders not found', 404))
@@ -303,7 +294,7 @@ export const getIncomesByDay = catchAsyncErr(async (req, res, next) => {
 })
 
 export const deliveryPerson = catchAsyncErr(async (req, res, next) => {
-const { deliveryPerson }=req.body
+  const { deliveryPerson } = req.body
   const { id } = req.params
   await orderModel.findByIdAndUpdate(id, { deliveryPerson }, { new: true })
 
@@ -314,13 +305,13 @@ const { deliveryPerson }=req.body
 const delivered = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
-  const order=await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
-  pusher.trigger('cavelo', 'orderDelivered',order);
-  let user=await userModel.findById(order.user)
-  let title="order delivered"
-  let message="your order is delivered  "
-  let playerId=user.subscriptionId
-   await sendNotificationToSpecificUser(playerId, title, message)
+  const order = await orderModel.findByIdAndUpdate(id, { isDelivered: true, deliveredAt: new Date() }, { new: true })
+  pusher.trigger('cavelo', 'orderDelivered', order);
+  let user = await userModel.findById(order.user)
+  let title = "order delivered"
+  let message = "your order is delivered  "
+  let playerId = user.subscriptionId
+  await sendNotificationToSpecificUser(playerId, title, message)
 
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
@@ -329,12 +320,12 @@ const delivered = catchAsyncErr(async (req, res, next) => {
 const paid = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
- const order = await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
- pusher.trigger('cavelo', 'orderPaid',order);
- let user=await userModel.findById(order.user)
- let title="order paid"
- let message="your order is paid"
- let playerId=user.subscriptionId
+  const order = await orderModel.findByIdAndUpdate(id, { isPaid: true, paidAt: new Date() }, { new: true })
+  pusher.trigger('cavelo', 'orderPaid', order);
+  let user = await userModel.findById(order.user)
+  let title = "order paid"
+  let message = "your order is paid"
+  let playerId = user.subscriptionId
   await sendNotificationToSpecificUser(playerId, title, message)
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
@@ -343,13 +334,13 @@ const paid = catchAsyncErr(async (req, res, next) => {
 const cancel = catchAsyncErr(async (req, res, next) => {
 
   const { id } = req.params
-  const order=await orderModel.findByIdAndUpdate(id, { cancel: true }, { new: true })
-  pusher.trigger('cavelo', 'orderCanceld',order);
-  let user=await userModel.findById(order.user)
-  let title="order canceled"
-  let message="your order is canceled "
-  let playerId=user.subscriptionId
-   await sendNotificationToSpecificUser(playerId, title, message)
+  const order = await orderModel.findByIdAndUpdate(id, { cancel: true }, { new: true })
+  pusher.trigger('cavelo', 'orderCanceld', order);
+  let user = await userModel.findById(order.user)
+  let title = "order canceled"
+  let message = "your order is canceled "
+  let playerId = user.subscriptionId
+  await sendNotificationToSpecificUser(playerId, title, message)
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
@@ -381,6 +372,6 @@ const userGetOrderHistory = catchAsyncErr(async (req, res, next) => {
 
 export {
   ctreateCashOrder, cancel, getSpecificorders, getCurrentDayInvoices,
-  getAllorders, complete,paid, delivered, AdminGetOrder, userGetOrder, userGetOrderHistory
+  getAllorders, complete, paid, delivered, AdminGetOrder, userGetOrder, userGetOrderHistory
 }
 
