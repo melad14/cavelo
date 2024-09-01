@@ -75,7 +75,7 @@ export const updateOrder = catchAsyncErr(async (req, res) => {
 const getSpecificorders = catchAsyncErr(async (req, res, next) => {
 
   let orders = await orderModel.find({ user: req.user._id })
-    .select('-cartItems  -user -tableNumber');
+    .select('-cartItems  -user -tableNumber').sort({ createdAt: -1 });
 
   res.status(200).json({ "message": " success", "statusCode": 200, orders })
 
