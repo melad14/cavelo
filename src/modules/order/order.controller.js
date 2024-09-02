@@ -79,16 +79,14 @@ export const updateItemQuantity = catchAsyncErr(async (req, res) => {
   const order = await orderModel.findById(orderId);
 
   // Find the index of the item in the cartItems array
-  const cartItemIndex = order.cartItems.findIndex(
-    item => item._id.toString() === cartItemId
-  );
+  const cartItemIndex = order.cartItems.findIndex( item => item.item._id.toString() === cartItemId);
   if (cartItemIndex === -1) {
     return res.status(404).json({ message: "Item not found in cart", statusCode: 404 });
   }
 
   // Get the item to update
   const itemToUpdate = order.cartItems[cartItemIndex];
-console.log(itemToUpdate);
+
 
   // Calculate the current total price of the item in the cart
   const currentItemTotalPrice = itemToUpdate.basePrice 
