@@ -60,7 +60,6 @@ export const updateOrder = catchAsyncErr(async (req, res) => {
   const { item, quantity, size, extraIngredients, totalPrice } = req.body;
 
   const order = await orderModel.findById(id)
-
   const newCartItem = { item, quantity, size, extraIngredients };
 
 
@@ -68,10 +67,33 @@ export const updateOrder = catchAsyncErr(async (req, res) => {
   order.totalOrderPrice = order.totalOrderPrice + totalPrice
   await order.save();
 
-
   return res.status(200).json({ "message": " success", "statusCode": 200, order });
 
 });
+export const removeItem = catchAsyncErr(async (req, res) => {
+  const { orderId, cartItemId } = req.body;
+
+  const order = await orderModel.findById(orderId);
+
+  const cartItemIndex = order.cartItems.findIndex(
+    item => item._id.toString() === cartItemId
+  );
+
+
+  const itemToRemove = order.cartItems[cartItemIndex];
+  const itemTotalPrice =
+    itemToRemove.quantity * ( (itemToRemove.size?.price || itemToRemove.basePrice ) + itemToRemove.extraIngredients.reduce((acc, curr) => acc + curr.price, 0));
+
+  order.cartItems.splice(cartItemIndex, 1);
+
+  order.totalOrderPrice -= itemTotalPrice;
+
+  await order.save();
+
+  res.json({ "message": "success", "statusCode": 200, order });
+
+})
+
 const getSpecificorders = catchAsyncErr(async (req, res, next) => {
 
   let orders = await orderModel.find({ user: req.user._id })
