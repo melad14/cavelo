@@ -57,14 +57,14 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 export const updateOrder = catchAsyncErr(async (req, res) => {
 
   const { id } = req.params;
-  const { item, quantity, size, extraIngredients,basePrice, totalPrice } = req.body;
+  const { item, quantity, size, extraIngredients,basePrice } = req.body;
 
   const order = await orderModel.findById(id)
   const newCartItem = { item, quantity, size, basePrice,extraIngredients };
 
 
   order.cartItems.push(newCartItem);
-  order.totalOrderPrice = order.totalOrderPrice + totalPrice
+  order.totalOrderPrice = order.totalOrderPrice + basePrice
   await order.save();
 
   return res.status(200).json({ "message": " success", "statusCode": 200, order });
