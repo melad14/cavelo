@@ -72,14 +72,15 @@ export const updateOrder = catchAsyncErr(async (req, res) => {
 });
 
 export const updateItemQuantity = catchAsyncErr(async (req, res) => {
-  const { orderId, cartItemId, quantity } = req.body;
+  const { orderId, cartItemId, quantity, size, extraIngredients } = req.body;
 
   // Find the order by ID
   const order = await orderModel.findById(orderId);
 
   // Find the index of the item in the cartItems array
   const cartItemIndex = order.cartItems.findIndex(
-    item => item._id.toString() === cartItemId);
+    item => item._id.toString() === cartItemId
+  );
 
   // Get the item to update
   const itemToUpdate = order.cartItems[cartItemIndex];
@@ -88,12 +89,14 @@ export const updateItemQuantity = catchAsyncErr(async (req, res) => {
   const currentItemTotalPrice =
     itemToUpdate.quantity * ((itemToUpdate.size?.price || itemToUpdate.basePrice) + itemToUpdate.extraIngredients.reduce((acc, curr) => acc + curr.price, 0));
 
-  // Calculate the new total price of the item based on the new quantity
-  const newItemTotalPrice =
-    quantity * ((itemToUpdate.size?.price || itemToUpdate.basePrice) + itemToUpdate.extraIngredients.reduce((acc, curr) => acc + curr.price, 0));
+  // Update the item's properties
+  if (quantity) itemToUpdate.quantity = quantity;
+  if (size) itemToUpdate.size = size;
+  if (extraIngredients) itemToUpdate.extraIngredients = extraIngredients;
 
-  // Update the item's quantity
-  itemToUpdate.quantity = quantity;
+  // Calculate the new total price of the item after the updates
+  const newItemTotalPrice =
+    itemToUpdate.quantity * ((itemToUpdate.size?.price || itemToUpdate.basePrice) + itemToUpdate.extraIngredients.reduce((acc, curr) => acc + curr.price, 0));
 
   // Adjust the total order price
   order.totalOrderPrice = order.totalOrderPrice - currentItemTotalPrice + newItemTotalPrice;
