@@ -26,5 +26,6 @@ orderRouter.get('/my-orders',protectedRoutes,allowTo('user','waiter'),userGetOrd
 orderRouter.get('/search-orders',searchOrders)
 orderRouter.put('/update-order/:id',protectedRoutes,allowTo('admin'),updateOrder)
 orderRouter.put('/remove-order',protectedRoutes,allowTo('admin'),removeItem)
+orderRouter.put('/update-item-quantity',protectedRoutes,allowTo('admin'),updateItemQuantity)
 
 export default orderRouter

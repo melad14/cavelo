@@ -57,10 +57,10 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 export const updateOrder = catchAsyncErr(async (req, res) => {
 
   const { id } = req.params;
-  const { item, quantity, size, extraIngredients, totalPrice } = req.body;
+  const { item, quantity, size, extraIngredients,basePrice, totalPrice } = req.body;
 
   const order = await orderModel.findById(id)
-  const newCartItem = { item, quantity, size, extraIngredients };
+  const newCartItem = { item, quantity, size, basePrice,extraIngredients };
 
 
   order.cartItems.push(newCartItem);
@@ -69,6 +69,40 @@ export const updateOrder = catchAsyncErr(async (req, res) => {
 
   return res.status(200).json({ "message": " success", "statusCode": 200, order });
 
+});
+
+export const updateItemQuantity = catchAsyncErr(async (req, res) => {
+  const { orderId, cartItemId, quantity } = req.body;
+
+  // Find the order by ID
+  const order = await orderModel.findById(orderId);
+
+  // Find the index of the item in the cartItems array
+  const cartItemIndex = order.cartItems.findIndex(
+    item => item._id.toString() === cartItemId);
+
+  // Get the item to update
+  const itemToUpdate = order.cartItems[cartItemIndex];
+
+  // Calculate the current total price of the item in the cart
+  const currentItemTotalPrice =
+    itemToUpdate.quantity * ((itemToUpdate.size?.price || itemToUpdate.basePrice) + itemToUpdate.extraIngredients.reduce((acc, curr) => acc + curr.price, 0));
+
+  // Calculate the new total price of the item based on the new quantity
+  const newItemTotalPrice =
+    quantity * ((itemToUpdate.size?.price || itemToUpdate.basePrice) + itemToUpdate.extraIngredients.reduce((acc, curr) => acc + curr.price, 0));
+
+  // Update the item's quantity
+  itemToUpdate.quantity = quantity;
+
+  // Adjust the total order price
+  order.totalOrderPrice = order.totalOrderPrice - currentItemTotalPrice + newItemTotalPrice;
+
+  // Save the order
+  await order.save();
+
+  // Send the updated order as the response
+  res.json({ message: "success", statusCode: 200, order });
 });
 export const removeItem = catchAsyncErr(async (req, res) => {
   const { orderId, cartItemId } = req.body;
@@ -93,6 +127,7 @@ export const removeItem = catchAsyncErr(async (req, res) => {
   res.json({ "message": "success", "statusCode": 200, order });
 
 })
+
 
 const getSpecificorders = catchAsyncErr(async (req, res, next) => {
 
