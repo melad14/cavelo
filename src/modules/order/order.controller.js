@@ -120,8 +120,7 @@ export const removeItem = catchAsyncErr(async (req, res) => {
 
 
   const itemToRemove = order.cartItems[cartItemIndex];
-  const itemTotalPrice =
-    itemToRemove.quantity * ( (itemToRemove.size?.price || itemToRemove.basePrice ) + itemToRemove.extraIngredients.reduce((acc, curr) => acc + curr.price, 0));
+  const itemTotalPrice = itemToRemove.basePrice
 
   order.cartItems.splice(cartItemIndex, 1);
 
