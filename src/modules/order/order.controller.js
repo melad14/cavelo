@@ -75,7 +75,7 @@ export const updateItemQuantity = catchAsyncErr(async (req, res) => {
   const { orderId, cartItemId, quantity, size, basePrice,extraIngredients } = req.body;
 
 
-  // Find the order by ID
+
   const order = await orderModel.findById(orderId);
 
   // Find the index of the item in the cartItems array
@@ -93,6 +93,8 @@ export const updateItemQuantity = catchAsyncErr(async (req, res) => {
 
   // Update the item's properties
   if (quantity) itemToUpdate.quantity = quantity;
+  if (size) itemToUpdate.size = size;
+  if (basePrice) itemToUpdate.basePrice = basePrice;
   if (size) itemToUpdate.size = size;
   if (extraIngredients) itemToUpdate.extraIngredients = extraIngredients;
 
