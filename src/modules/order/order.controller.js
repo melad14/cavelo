@@ -72,7 +72,7 @@ export const updateOrder = catchAsyncErr(async (req, res) => {
 });
 
 export const updateItemQuantity = catchAsyncErr(async (req, res) => {
-  const { orderId, cartItemId, quantity, size,extraIngredients } = req.body;
+  const { orderId, cartItemId, quantity, size,extraIngredients,basePrice } = req.body;
 
 
 
