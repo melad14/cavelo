@@ -83,7 +83,7 @@ export const updateItemQuantity = catchAsyncErr(async (req, res) => {
   if (cartItemIndex === -1) {
     return res.status(404).json({ message: "Item not found in cart", statusCode: 404 });
   }
-
+  const itemToUpdate = order.cartItems[cartItemIndex];
   // Get the item to update
   const currentItemTotalPrice =
   itemToUpdate.quantity * ((itemToUpdate.size?.price || itemToUpdate.basePrice) + itemToUpdate.extraIngredients.reduce((acc, curr) => acc + curr.price, 0));
