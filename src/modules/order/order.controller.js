@@ -209,6 +209,46 @@ export const searchOrders = catchAsyncErr(async (req, res, next) => {
   res.status(200).json({ message: "success", statusCode: 200, orders });
 });
 
+export const getOrdersByMonth = catchAsyncErr(async (req, res, next) => {
+  const { month, year } = req.body;
+
+  if (!month || !year) {
+    return next(new AppErr('Month and year are required', 400));
+  }
+
+  // Parse the month and year
+  const specificMonth = parseInt(month, 10) - 1; // month is 0-indexed in JavaScript Date
+  const specificYear = parseInt(year, 10);
+
+  // Check for valid month and year
+  if (isNaN(specificMonth) || isNaN(specificYear) || specificMonth < 0 || specificMonth > 11) {
+    return next(new AppErr('Invalid month or year format', 400));
+  }
+
+  // Set the start and end of the specific month
+  const startDate = new Date(specificYear, specificMonth, 1);
+  const endDate = new Date(specificYear, specificMonth + 1, 1);
+
+  // Find orders created in the specific month
+  const orders = await orderModel.find({
+    createdAt: {
+      $gte: startDate,
+      $lt: endDate
+    }
+  }).select('-cartItems ')
+    .populate({
+      path: 'user',
+      select: 'first_name last_name phone role _id'
+    });
+
+  if (!orders.length) return next(new AppErr('No orders found for the specified month', 404));
+
+  res.status(200).json({
+    message: "Success",
+    statusCode: 200,
+    orders
+  });
+});
 
 export const getTodayorders = catchAsyncErr(async (req, res, next) => {
   const today = new Date();

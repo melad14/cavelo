@@ -1,6 +1,6 @@
 import express from "express"
 import {   AdminGetOrder, cancel, complete, ctreateCashOrder, delivered, deliveryPerson, getAllorders, getCurrentDayInvoices,
-     getIncomesByDay, getMonthInvoices, getOrdersByDay, getSpecificorders, getTodayorders, paid, removeItem, searchOrders, updateItemQuantity, updateOrder, userGetOrder, userGetOrderHistory } from "./order.controller.js"
+     getIncomesByDay, getMonthInvoices, getOrdersByDay, getOrdersByMonth, getSpecificorders, getTodayorders, paid, removeItem, searchOrders, updateItemQuantity, updateOrder, userGetOrder, userGetOrderHistory } from "./order.controller.js"
 import { allowTo, protectedRoutes } from "../../middleware/protectedRoute.js";
 
 const orderRouter = express.Router()
@@ -9,6 +9,7 @@ orderRouter.get('/get-user-order',protectedRoutes,allowTo('user','waiter'),getSp
 orderRouter.get('/get-all-orders',protectedRoutes,allowTo('admin'),getAllorders)
 orderRouter.get('/get-today-orders',protectedRoutes,allowTo('admin'),getTodayorders)
 orderRouter.get('/get-day-orders',protectedRoutes,allowTo('admin'),getOrdersByDay)
+orderRouter.get('/get-month-orders',protectedRoutes,allowTo('admin'),getOrdersByMonth)
 orderRouter.get('/admin-get-order/:id',protectedRoutes,allowTo('admin'),AdminGetOrder)
 orderRouter.get('/user-get-order/:id',protectedRoutes,allowTo('user','waiter'),userGetOrder)
 orderRouter.put('/complete/:id',protectedRoutes,allowTo('admin'),complete)
