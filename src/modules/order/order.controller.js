@@ -72,7 +72,7 @@ export const updateOrder = catchAsyncErr(async (req, res) => {
 });
 
 export const updateItemQuantity = catchAsyncErr(async (req, res) => {
-  const { orderId, cartItemId, quantity, size, basePrice,extraIngredients } = req.body;
+  const { orderId, cartItemId, quantity, size,extraIngredients } = req.body;
 
 
 
@@ -85,11 +85,10 @@ export const updateItemQuantity = catchAsyncErr(async (req, res) => {
   }
 
   // Get the item to update
-  const itemToUpdate = order.cartItems[cartItemIndex];
+  const currentItemTotalPrice =
+  itemToUpdate.quantity * ((itemToUpdate.size?.price || itemToUpdate.basePrice) + itemToUpdate.extraIngredients.reduce((acc, curr) => acc + curr.price, 0));
 
-
-  // Calculate the current total price of the item in the cart
-  const currentItemTotalPrice = itemToUpdate.basePrice 
+ 
 
   // Update the item's properties
   if (quantity) itemToUpdate.quantity = quantity;
@@ -99,7 +98,9 @@ export const updateItemQuantity = catchAsyncErr(async (req, res) => {
   if (extraIngredients) itemToUpdate.extraIngredients = extraIngredients;
 
   // Calculate the new total price of the item after the updates
-  const newItemTotalPrice =basePrice
+  const newItemTotalPrice =
+  itemToUpdate.quantity * ((itemToUpdate.size?.price || itemToUpdate.basePrice) + itemToUpdate.extraIngredients.reduce((acc, curr) => acc + curr.price, 0));
+
    
 
   // Adjust the total order price
