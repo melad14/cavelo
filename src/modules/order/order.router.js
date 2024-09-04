@@ -1,11 +1,12 @@
 import express from "express"
-import {   AdminGetOrder, cancel, complete, ctreateCashOrder, delivered, deliveryPerson, getAllorders, getCurrentDayInvoices,
+import {   AdminGetOrder, adminGetUserOrder, cancel, complete, ctreateCashOrder, delivered, deliveryPerson, getAllorders, getCurrentDayInvoices,
      getIncomesByDay, getMonthInvoices, getOrdersByDay, getOrdersByMonth, getSpecificorders, getTodayorders, paid, removeItem, searchOrders, updateItemQuantity, updateOrder, userGetOrder, userGetOrderHistory } from "./order.controller.js"
 import { allowTo, protectedRoutes } from "../../middleware/protectedRoute.js";
 
 const orderRouter = express.Router()
 orderRouter.post('/cash/:id',protectedRoutes,allowTo('user','waiter'),ctreateCashOrder)
 orderRouter.get('/get-user-order',protectedRoutes,allowTo('user','waiter'),getSpecificorders)
+orderRouter.get('/admin-get-user-order',protectedRoutes,allowTo('admin'),adminGetUserOrder)
 orderRouter.get('/get-all-orders',protectedRoutes,allowTo('admin'),getAllorders)
 orderRouter.get('/get-today-orders',protectedRoutes,allowTo('admin'),getTodayorders)
 orderRouter.get('/get-day-orders',protectedRoutes,allowTo('admin'),getOrdersByDay)

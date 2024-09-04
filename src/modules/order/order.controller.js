@@ -145,6 +145,15 @@ const getSpecificorders = catchAsyncErr(async (req, res, next) => {
 
 })
 
+export const adminGetUserOrder = catchAsyncErr(async (req, res, next) => {
+const{id}=req.body
+  let orders = await orderModel.find({ user:id})
+    .select('-cartItems  -user -tableNumber').sort({ createdAt: -1 });
+
+  res.status(200).json({ "message": " success", "statusCode": 200, orders })
+
+})
+
 
 const AdminGetOrder = catchAsyncErr(async (req, res, next) => {
   const { id } = req.params

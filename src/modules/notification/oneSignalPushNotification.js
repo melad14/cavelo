@@ -40,7 +40,6 @@ const sendNotificationToSpecificUser = async (playerId, title, message) => {
 
     try {
      await axios.post('https://onesignal.com/api/v1/notifications', data, { headers });
-
      
     } catch (error) {
         console.log(`Error sending notification to user ${playerId}:`, error.response ? error.response.data : error.message);
