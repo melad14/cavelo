@@ -35,12 +35,9 @@ const ctreateCashOrder = catchAsyncErr(async (req, res, next) => {
 
 
     const admins = await userModel.find({ role: "admin" })
-
-
     for (let admin of admins) {
 
       if (admin.subscriptionId) {
-
         const title = "New order"
         const message = "please check New order"
         const playerId = admin.subscriptionId
@@ -454,6 +451,21 @@ const cancel = catchAsyncErr(async (req, res, next) => {
   let message = "your order is canceled "
   let playerId = user.subscriptionId
   await sendNotificationToSpecificUser(playerId, title, message)
+  
+  if(req.user.role==="user"){
+
+    const admins = await userModel.find({ role: "admin" })
+    for (let admin of admins) {
+  
+      if (admin.subscriptionId) {
+        const title = "order canceled"
+        const message = "user cancel order"
+        const playerId = admin.subscriptionId
+        await sendNotificationToSpecificUser(playerId, title, message);
+      }
+    }
+  }
+  
   res.status(200).json({ "message": " success", "statusCode": 200 })
 
 })
