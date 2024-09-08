@@ -5,9 +5,9 @@ import { userModel } from "../../../databases/models/users.js";
 import { sendSMSTest } from '../../emails/user.sms.js';
 
 
-const generateOTP = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
-};
+// const generateOTP = () => {
+//     return Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
+// };
 
 const signin = catchAsyncErr(async (req, res, next) => {
     const { phone,subscriptionId } = req.body;
@@ -20,19 +20,19 @@ const signin = catchAsyncErr(async (req, res, next) => {
     if (!user) {
       const user = new userModel({ phone, subscriptionId})
       await user.save();
-  
-      const otp = generateOTP();
-      const otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
-      await userModel.findOneAndUpdate({ phone }, { otp, otpExpires, code: 0 }, { new: true });
-      await sendSMSTest(phone, `Your OTP is ${otp}`);
+    const otp = '555666'
+    //   const otp = generateOTP();
+    //   const otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
+      await userModel.findOneAndUpdate({ phone }, { otp, code: 0 }, { new: true });
+     // await sendSMSTest(phone, `Your OTP is ${otp}`);
   
       res.status(200).json({ "message": "User created and OTP sent", "statusCode": 200 });
     } else {
-      const otp = generateOTP();
-      const otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
-      await userModel.findOneAndUpdate({ phone }, { otp, otpExpires,subscriptionId }, { new: true });
+    //   const otp = generateOTP();
+    //   const otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
+      await userModel.findOneAndUpdate({ phone }, { subscriptionId }, { new: true });
   
-      await sendSMSTest(phone, `Your OTP is ${otp}`);
+      //await sendSMSTest(phone, `Your OTP is ${otp}`);
   
       res.status(200).json({ "message": "OTP sent", "statusCode": 200 });
     }
@@ -43,11 +43,11 @@ const verifyOTP = catchAsyncErr(async (req, res, next) => {
     const { phone, otp } = req.body;
     let user = await userModel.findOne({ phone });
 
-    if (!user || user.otp !== otp || new Date() > new Date(user.otpExpires)) {
+    if (!user || user.otp !== otp) {
         return next(new AppErr("Invalid or expired OTP", 400));
     }
 
-    await userModel.updateOne({ phone }, { otp: null, otpExpires: null });
+    // await userModel.updateOne({ phone }, { otp: null, otpExpires: null });
 
     let token = jwt.sign({ user }, `${process.env.TOKEN_SK}`);
     res.status(200).json({ "message": "success","statusCode":200 , token,result:user.code });
